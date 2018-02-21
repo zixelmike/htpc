@@ -2,7 +2,7 @@
 
 # Alex@ELEC - Embedded Linux Entertainment Center
 
-AlexELEC is a 'Just enough OS' Linux distribution for running the award-winning [Kodi](http://kodi.tv), [VDR](http://www.tvdr.de), [Tvheadend] (http://tvheadend.org/) and [Libretro](http://www.libretro.com) software on popular mediacentre hardware.
+AlexELEC is a 'Just enough OS' Linux distribution for running the award-winning [Kodi](http://kodi.tv), [VDR](http://www.tvdr.de), [Tvheadend](http://tvheadend.org/) and [Libretro](http://www.libretro.com) software on popular mediacentre hardware.
 AlexELEC is a fork of the popular [LibreELEC](https://libreelec.tv/) project with a stronger focus on pre-release testing and post-release change management.
 Further information on the project can be found on the [AlexELEC website](http://alexelec.in.ua).
 
