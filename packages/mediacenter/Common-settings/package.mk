@@ -4,7 +4,8 @@
 ################################################################################
 
 PKG_NAME="Common-settings"
-PKG_VERSION="b73fb11"
+PKG_VERSION="15c7828"
+PKG_VERSION_ADDON="8.0"
 PKG_ARCH="any"
 PKG_LICENSE="prop."
 PKG_SITE="http://www.alexelec.in.ua"
@@ -17,7 +18,7 @@ PKG_LONGDESC="Common-settings: is a settings dialog for AlexELEC"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_MAKE_OPTS_TARGET="DISTRONAME=$DISTRONAME ROOT_PASSWORD=$ROOT_PASSWORD"
+PKG_MAKE_OPTS_TARGET="DISTRONAME=$DISTRONAME ADDON_VERSION=$PKG_VERSION_ADDON ROOT_PASSWORD=$ROOT_PASSWORD"
 
 post_makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/alexelec
