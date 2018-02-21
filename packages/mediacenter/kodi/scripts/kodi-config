@@ -1,0 +1,24 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+# setup Kodi sources
+if [ ! -f $HOME/.kodi/userdata/sources.xml ]; then
+  if [ -f /usr/share/kodi/config/sources.xml ]; then
+    cp /usr/share/kodi/config/sources.xml $HOME/.kodi/userdata
+  fi
+fi
+
+# common setup guisettings
+if [ ! -f $HOME/.kodi/userdata/guisettings.xml ] ; then
+  if [ -f /usr/share/kodi/config/guisettings.xml ]; then
+    cp /usr/share/kodi/config/guisettings.xml $HOME/.kodi/userdata
+  fi
+fi
+
+KODI_ARGS="--lircdev /run/lirc/lircd"
+
+echo "KODI_ARGS=\"$KODI_ARGS\"" > /run/alexelec/kodi.conf
+echo "MALLOC_MMAP_THRESHOLD_=524288" >> /run/alexelec/kodi.conf

@@ -1,0 +1,18 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+if [ -e "/storage/.config/lirc_options.conf" ] ; then
+	LIRCD_OPTIONS="-O /storage/.config/lirc_options.conf"
+fi
+
+if [ -e "/storage/.config/lircd.conf" ] ; then
+	LIRCD_CONF="/storage/.config/lircd.conf"
+else
+	LIRCD_CONF="/etc/lirc/lircd.conf"
+fi
+
+
+exec /usr/sbin/lircd $LIRCD_OPTIONS "$@" $LIRCD_CONF

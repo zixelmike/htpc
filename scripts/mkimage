@@ -1,0 +1,178 @@
+#!/bin/bash
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+################################################################################
+# variables such as $ROOT $PATH etc... that are required for this
+# script to work must be passed via env ... in scripts/image
+################################################################################
+
+# set variables
+  AE_TMP=$(mktemp -d)
+  SAVE_ERROR="$AE_TMP/save_error"
+
+  if [ -z "$SYSTEM_SIZE" -o -z "$SYSTEM_PART_START" ]; then
+    echo "mkimage: SYSTEM_SIZE and SYSTEM_PART_START must be configured!"
+    exit 1
+  fi
+
+  STORAGE_SIZE=32 # STORAGE_SIZE must be >= 32 !
+
+  DISK_START_PADDING=$(( ($SYSTEM_PART_START + 2048 - 1) / 2048 ))
+  DISK_GPT_PADDING=1
+  DISK_SIZE=$(( $DISK_START_PADDING + $SYSTEM_SIZE + $STORAGE_SIZE + $DISK_GPT_PADDING ))
+  DISK="$TARGET_IMG/$IMAGE_NAME.img"
+
+# functions
+  cleanup() {
+    echo "image: cleanup..."
+    rm -rf "$AE_TMP"
+    echo
+    exit
+  }
+
+  show_error() {
+    echo "image: error happen..."
+    echo
+    cat "$SAVE_ERROR"
+    echo
+    cleanup
+    exit
+  }
+
+trap cleanup SIGINT
+
+# generate volume id for fat partition
+  UUID_1=$(date '+%d%m')
+  UUID_2=$(date '+%M%S')
+  FAT_SERIAL_NUMBER="${UUID_1}${UUID_2}"
+  UUID_SYSTEM="${UUID_1}-${UUID_2}"
+  FAT_VOLUME_LABEL="ALEXELEC"
+
+# create an image
+  echo
+  echo "image: creating file $(basename $DISK)..."
+  dd if=/dev/zero of="$DISK" bs=1M count="$DISK_SIZE" conv=fsync >"$SAVE_ERROR" 2>&1 || show_error
+
+# write a disklabel
+  echo "image: creating partition table..."
+  parted -s "$DISK" mklabel gpt
+  sync
+
+# create part1
+  echo "image: creating part1..."
+  SYSTEM_PART_END=$(( $SYSTEM_PART_START + ($SYSTEM_SIZE * 1024 * 1024 / 512) - 1 ))
+  parted -s "$DISK" -a min unit s mkpart primary fat32 $SYSTEM_PART_START $SYSTEM_PART_END
+  parted -s "$DISK" set 1 legacy_boot on
+  sync
+
+# create part2
+  echo "image: creating part2..."
+  STORAGE_PART_START=$(( $SYSTEM_PART_END + 1 ))
+  STORAGE_PART_END=$(( $STORAGE_PART_START + ($STORAGE_SIZE * 1024 * 1024 / 512) - 1 ))
+  parted -s "$DISK" -a min unit s mkpart primary ext4 $STORAGE_PART_START $STORAGE_PART_END
+  sync
+
+  # write mbr
+  echo "image: writing mbr..."
+  MBR="$TOOLCHAIN/share/syslinux/gptmbr.bin"
+  if [ -n "$MBR" ]; then
+      dd bs=440 count=1 conv=fsync,notrunc if="$MBR" of="$DISK" >"$SAVE_ERROR" 2>&1 || show_error
+  fi
+
+# create filesystem on part1
+  echo "image: creating filesystem on part1..."
+  OFFSET=$(( $SYSTEM_PART_START * 512 ))
+  HEADS=4
+  TRACKS=32
+  SECTORS=$(( $SYSTEM_SIZE * 1024 * 1024 / 512 / $HEADS / $TRACKS ))
+
+  shopt -s expand_aliases  # enables alias expansion in script
+  alias mformat="mformat -i $DISK@@$OFFSET -h $HEADS -t $TRACKS -s $SECTORS"
+  alias mcopy="mcopy -i $DISK@@$OFFSET"
+  alias mmd="mmd -i $DISK@@$OFFSET"
+
+  mformat -v "$FAT_VOLUME_LABEL" -N "$FAT_SERIAL_NUMBER" ::
+  sync
+
+# create bootloader configuration
+    echo "image: creating bootloader configuration..."
+    cat << EOF > "$AE_TMP"/syslinux.cfg
+SAY Wait for installer to start or press <TAB> for more options (live, run)
+DEFAULT installer
+TIMEOUT 50
+PROMPT 1
+
+LABEL installer
+  KERNEL /$KERNEL_NAME
+  APPEND boot=UUID=$UUID_SYSTEM installer quiet tty vga=current
+
+LABEL live
+  KERNEL /$KERNEL_NAME
+  APPEND boot=UUID=$UUID_SYSTEM live quiet tty vga=current
+
+LABEL run
+  KERNEL /$KERNEL_NAME
+  APPEND boot=UUID=$UUID_SYSTEM disk=UUID=$UUID_STORAGE portable quiet
+EOF
+
+    mcopy "$AE_TMP/syslinux.cfg" ::
+
+  # install extlinux
+    echo "image: installing extlinux to part1..."
+    syslinux.mtools --offset "$OFFSET" -i "$DISK"
+
+  # copy files
+    echo "image: copying files to part1..."
+    mcopy $TARGET_IMG/$IMAGE_NAME.kernel "::/$KERNEL_NAME"
+    mcopy $TARGET_IMG/$IMAGE_NAME.system ::/SYSTEM
+    mcopy $RELEASE_DIR/target/KERNEL.md5 "::/$KERNEL_NAME.md5"
+    mcopy $RELEASE_DIR/target/SYSTEM.md5 ::/SYSTEM.md5
+
+    mmd EFI EFI/BOOT
+    mcopy $TOOLCHAIN/share/syslinux/bootx64.efi ::/EFI/BOOT
+    mcopy $TOOLCHAIN/share/syslinux/ldlinux.e64 ::/EFI/BOOT
+    mcopy "$AE_TMP"/syslinux.cfg ::/EFI/BOOT
+# bootloader
+
+# extract part2 from image to format and copy files
+  echo "image: extracting part2 from image..."
+  STORAGE_PART_COUNT=$(( $STORAGE_PART_END - $STORAGE_PART_START + 1 ))
+  sync
+  dd if="$DISK" of="$AE_TMP/part2.ext4" bs=512 skip="$STORAGE_PART_START" count="$STORAGE_PART_COUNT" conv=fsync >"$SAVE_ERROR" 2>&1 || show_error
+
+# create filesystem on part2
+  echo "image: creating filesystem on part2..."
+  mke2fs -F -q -t ext4 -m 0 "$AE_TMP/part2.ext4"
+  tune2fs -U $UUID_STORAGE "$AE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
+  e2fsck -n "$AE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
+  sync
+
+# add resize mark
+  mkdir "$AE_TMP/part2.fs"
+  touch "$AE_TMP/part2.fs/.please_resize_me"
+  echo "image: populating filesystem on part2..."
+  populatefs -U -d "$AE_TMP/part2.fs" "$AE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
+  sync
+  e2fsck -n "$AE_TMP/part2.ext4" >"$SAVE_ERROR" 2>&1 || show_error
+
+# merge part2 back to disk image
+  echo "image: merging part2 back to image..."
+  dd if="$AE_TMP/part2.ext4" of="$DISK" bs=512 seek="$STORAGE_PART_START" conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+
+# extract part1 from image to run fsck
+  echo "image: extracting part1 from image..."
+  SYSTEM_PART_COUNT=$(( $SYSTEM_PART_END - $SYSTEM_PART_START + 1 ))
+  sync
+  dd if="$DISK" of="$AE_TMP/part1.fat" bs=512 skip="$SYSTEM_PART_START" count="$SYSTEM_PART_COUNT" conv=fsync >"$SAVE_ERROR" 2>&1 || show_error
+  echo "image: checking filesystem on part1..."
+  fsck -n $AE_TMP/part1.fat >"$SAVE_ERROR" 2>&1 || show_error
+
+# gzip
+  echo "image: compressing..."
+  gzip < $DISK > $DISK.gz
+
+# cleanup
+  cleanup

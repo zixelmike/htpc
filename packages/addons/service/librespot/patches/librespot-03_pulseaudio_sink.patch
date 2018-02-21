@@ -1,0 +1,29 @@
+From 3e51e00e717f80f7c23ed112e6ab42d1a61cb7a9 Mon Sep 17 00:00:00 2001
+From: awiouy <awiouy@gmail.com>
+Date: Fri, 26 Jan 2018 21:07:48 +0100
+Subject: [PATCH] use librespot_sink pulseadio sink
+
+---
+ src/audio_backend/pulseaudio.rs | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/audio_backend/pulseaudio.rs b/src/audio_backend/pulseaudio.rs
+index e9f0039..d5c2bbb 100644
+--- a/src/audio_backend/pulseaudio.rs
++++ b/src/audio_backend/pulseaudio.rs
+@@ -75,13 +75,14 @@ impl Open for PulseAudioSink {
+ 
+ impl Sink for PulseAudioSink {
+     fn start(&mut self) -> io::Result<()> {
++        let sink = CString::new("librespot_sink").unwrap();
+         if self.s == null_mut() {
+             self.s = call_pulseaudio(
+                 |err| unsafe {
+                     pa_simple_new(null(),               // Use the default server.
+                                   self.name.as_ptr(),   // Our application's name.
+                                   PA_STREAM_PLAYBACK,
+-                                  null(),               // Use the default device.
++                                  sink.as_ptr(),        // Our sink.
+                                   self.desc.as_ptr(),   // desc of our stream.
+                                   &self.ss,             // Our sample format.
+                                   null(),               // Use default channel map

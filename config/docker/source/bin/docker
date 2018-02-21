@@ -1,0 +1,12 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+name="$(basename $0)"
+. /etc/profile
+oe_setup_addon "$name"
+
+docker rm "$name" 2>/dev/null
+docker run --name="$name" \

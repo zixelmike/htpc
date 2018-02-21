@@ -1,0 +1,11 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+if [ -e "/storage/.config/lirc_options.conf" ] ; then
+	LIRCD_OPTIONS="-O /storage/.config/lirc_options.conf"
+fi
+
+exec /usr/sbin/lircd-uinput $LIRCD_OPTIONS "$@"
