@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="Common-settings"
-PKG_VERSION="15c7828"
+PKG_VERSION="189c3c0"
 PKG_VERSION_ADDON="8.0"
 PKG_ARCH="any"
 PKG_LICENSE="prop."
