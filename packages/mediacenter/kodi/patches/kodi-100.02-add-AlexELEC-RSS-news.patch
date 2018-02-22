@@ -1,0 +1,15 @@
+diff -Naurp kodi-7e52c1d/userdata/RssFeeds.xml kodi-7e52c1d-patch/userdata/RssFeeds.xml
+--- kodi-7e52c1d/userdata/RssFeeds.xml	2018-02-12 20:41:29.000000000 +0200
++++ kodi-7e52c1d-patch/userdata/RssFeeds.xml	2018-02-22 13:33:20.000000000 +0200
+@@ -3,8 +3,8 @@
+   <!-- RSS feeds. To have multiple feeds, just add a feed to the set. You can also have multiple sets. 	!-->
+   <!-- To use different sets in your skin, each must be called from skin with a unique id.             	!-->
+   <set id="1">
+-    <feed updateinterval="30">http://feeds.kodi.tv/xbmc</feed>
+-    <feed updateinterval="30">http://feeds.kodi.tv/latest_xbmc_addons</feed>
+-    <feed updateinterval="30">http://feeds.kodi.tv/updated_xbmc_addons</feed>
++    <feed updateinterval="30">http://news.liga.net/top/rss.xml</feed>
++    <feed updateinterval="30">http://finance.liga.net/export/all.xml</feed>
++    <feed updateinterval="30">http://biz.liga.net/all/rss.xml</feed>
+   </set>
+ </rssfeeds>
