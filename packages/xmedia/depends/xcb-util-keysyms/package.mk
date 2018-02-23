@@ -5,7 +5,6 @@
 
 PKG_NAME="xcb-util-keysyms"
 PKG_VERSION="0.4.0"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://xcb.freedesktop.org"
