@@ -25,6 +25,6 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/share/kodi/addons/
     for lng in $KODI_LANGUAGE_LIST; do
-        cp -PR $ROOT/$PKG_BUILD/*.$lng $INSTALL/usr/share/kodi/addons/
+        cp -PR $PKG_BUILD/*.$lng $INSTALL/usr/share/kodi/addons/
     done
 }
