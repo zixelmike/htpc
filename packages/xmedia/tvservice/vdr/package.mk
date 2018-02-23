@@ -39,6 +39,7 @@ pre_make_target() {
   VIDEODIR = /storage/recordings
   CONFDIR  = /storage/.config/vdr
   CACHEDIR = /storage/.cache/vdr
+  LIRC_DEVICE = /run/lirc/lircd
 
   NO_KBD = 1
   VDR_USER = root
@@ -48,7 +49,7 @@ EOF
 }
 
 make_target() {
-  make vdr
+  make vdr vdr.pc
   make include-dir
   make -C send
 }
