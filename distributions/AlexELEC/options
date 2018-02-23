@@ -101,6 +101,12 @@
 # build with Samba Client support (mounting SAMBA shares with KODI) (yes / no)
   KODI_SAMBA_SUPPORT="yes"
 
+# include initial language addons for Kodi (yes / no)
+  KODI_LANGUAGE_ADDONS="yes"
+
+# list language addons for Kodi (ru_ru de_de en_us pl_pl ...)
+  KODI_LANGUAGE_LIST="ru_ru"
+
 # build with NFS support (mounting nfs shares via the OS) (yes / no)
   NFS_SUPPORT="yes"
 

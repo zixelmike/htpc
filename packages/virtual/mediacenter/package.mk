@@ -25,9 +25,13 @@ done
 # some python stuff needed for various addons
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Pillow simplejson pycrypto"
 
-# system Service addons
+# system addons
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Common-settings xmlstarlet"
   
 if [ "$JOYSTICK_SUPPORT" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET peripheral.joystick"
+fi
+
+if [ "$KODI_LANGUAGE_ADDONS" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET kodi-language-addons"
 fi
