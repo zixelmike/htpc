@@ -5,7 +5,6 @@
 
 PKG_NAME="vdr"
 PKG_VERSION="2.3.8"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvdr.de"
