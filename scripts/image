@@ -131,6 +131,9 @@ $SCRIPTS/install debug
 # OEM packages
 [ "$OEM_SUPPORT" = "yes" ] && $SCRIPTS/install oem
 
+# Install AlexELEC packages
+$SCRIPTS/install xmedia
+
 # copy project related files to filesystem
 if [ -d "$PROJECT_DIR/$PROJECT/filesystem" ]; then
   cp -PR $PROJECT_DIR/$PROJECT/filesystem/* $INSTALL
