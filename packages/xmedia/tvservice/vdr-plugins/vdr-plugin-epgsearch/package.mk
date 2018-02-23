@@ -3,17 +3,16 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
-PKG_NAME="vdr-plugin-iptv"
-PKG_VERSION="0fe1cb7"
+PKG_NAME="vdr-plugin-epgsearch"
+PKG_VERSION="c7c02e2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
-PKG_SITE="https://github.com/rofafor/vdr-plugin-iptv"
-PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain vdr curl"
+PKG_SITE="https://projects.vdr-developer.org/git/vdr-plugin-epgsearch.git"
+PKG_URL="$PKG_SITE/snapshot/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_DEPENDS_TARGET="toolchain vdr"
 PKG_SECTION="xmedia/tvservice"
-PKG_SHORTDESC="vdr-iptv: an IPTV plugin for the Video Disk Recorder (VDR)"
-PKG_LONGDESC="vdr-iptv is an IPTV plugin for the Video Disk Recorder (VDR)"
+PKG_SHORTDESC="VDR -- epgsearch plugin"
+PKG_LONGDESC="vdr-epgsearch is a plugin for VDR, the Video Disk Recorder."
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_LOCALE_INSTALL="yes"
@@ -29,7 +28,7 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p $INSTALL/usr/config
-    mv -f $INSTALL/storage/.config/vdr $INSTALL/usr/config
+  mkdir -p $INSTALL/usr/config/vdr/plugins/epgsearch
+    cp -PR $PKG_DIR/config/* $INSTALL/usr/config/vdr/plugins/epgsearch
   rm -rf $INSTALL/storage
 }
