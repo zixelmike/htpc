@@ -20,6 +20,8 @@ fi
 touch /var/run/xorg-configure.done
 logger -t Xorg "creating needed directories and symlinks for driver: "$1""
 
+[ -f /storage/.cache/services/xorg.conf ] && . /storage/.cache/services/xorg.conf
+
 ##############################################################################
 # setup xorg.conf paths
 ##############################################################################
@@ -37,7 +39,11 @@ logger -t Xorg "### setup xorg.conf paths ###"
 
 logger -t Xorg "### creating start options ###"
 
-  XORG_ARGS="-s 0 -noreset -allowMouseOpenFail"
+  if [ "$DISABLE_CURSOR" = "1" ]; then
+    XORG_ARGS="-s 0 -noreset -allowMouseOpenFail -nocursor"
+  else
+    XORG_ARGS="-s 0 -noreset -allowMouseOpenFail"
+  fi
 
   # load user defined xorg.conf, if exist
   if [ -f "$XORG_CONF_USER" ]; then
