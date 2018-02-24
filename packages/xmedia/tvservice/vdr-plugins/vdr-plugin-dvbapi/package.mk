@@ -29,6 +29,7 @@ make_target() {
 makeinstall_target() {
   make LIBDIR=/usr/lib/vdr \
        LIBDVBCSA=1 \
+       GITTAG=$PKG_VERSION \
        DESTDIR=$INSTALL \
        install
 }
