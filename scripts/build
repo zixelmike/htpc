@@ -170,6 +170,7 @@ if [ ! -f $STAMP ]; then
       done
     fi
 
+    echo "current build: $PACKAGE_NAME" > $CURRENT_PKGBUILD
     printf "%${BUILD_INDENT}c ${boldyellow}BUILD${endcolor}    $PACKAGE_NAME ${boldwhite}($TARGET)${endcolor}\n" ' '>&$SILENT_OUT
     export BUILD_INDENT=$((${BUILD_INDENT:-1}+$BUILD_INDENT_SIZE))
 
