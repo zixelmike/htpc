@@ -37,4 +37,6 @@ post_makeinstall_target() {
   mkdir -p  $INSTALL/usr/config/mc
     cp -a $PKG_DIR/etc/* $INSTALL/usr/config/mc
     ln -sf /storage/.config/mc $INSTALL/etc/mc
+  rm -f $INSTALL/usr/share/mc/mc.lib
+    cp $PKG_DIR/config/mc.lib $INSTALL/usr/share/mc
 }
