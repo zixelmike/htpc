@@ -11,6 +11,10 @@
             <showhigherlevels>false</showhigherlevels>
         </eventlog>
     </general>
+    <locale>
+        <timezone>Europe/Kiev</timezone>
+        <timezonecountry>Ukraine</timezonecountry>
+    </locale>
     <pvrplayback>
         <enableradiords>false</enableradiords>
         <signalquality>true</signalquality>
@@ -18,6 +22,14 @@
     <services>
         <airplay>false</airplay>
     </services>
+    <smb>
+        <legacysecurity>true</legacysecurity>
+        <maxprotocol>1</maxprotocol>
+        <minprotocol>1</minprotocol>
+    </smb>
+    <weather>
+        <addon>weather.gismeteo</addon>
+    </weather>
     <audio>
         <mute>false</mute>
         <fvolumelevel>0.500000</fvolumelevel>
