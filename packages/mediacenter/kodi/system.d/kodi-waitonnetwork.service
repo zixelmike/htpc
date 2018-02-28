@@ -9,9 +9,7 @@ ConditionPathExists=/storage/.cache/alexelec/network_wait
 
 [Service]
 Type=oneshot
-EnvironmentFile=/storage/.cache/alexelec/network_wait
-ExecStart=/usr/sbin/connmand-wait-online --timeout=${WAIT_NETWORK_TIME}
-StandardOutput=null
+ExecStart=/usr/bin/wait-net.sh
 RemainAfterExit=yes
 
 [Install]

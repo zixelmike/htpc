@@ -251,6 +251,8 @@ post_makeinstall_target() {
     cp $PKG_DIR/scripts/cputemp $INSTALL/usr/bin
       ln -sf cputemp $INSTALL/usr/bin/gputemp
     cp $PKG_DIR/scripts/setwakeup.sh $INSTALL/usr/bin
+# Wait network service
+    cp $PKG_DIR/scripts/wait-net.sh $INSTALL/usr/bin
 
   mkdir -p $INSTALL/usr/share/kodi/addons
     cp -R $PKG_DIR/config/os.alexelec $INSTALL/usr/share/kodi/addons
@@ -300,6 +302,8 @@ post_makeinstall_target() {
   xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "service.common.settings" $ADDON_MANIFEST
   #xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "service.extended.settings" $ADDON_MANIFEST
   xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "repository.search.db" $ADDON_MANIFEST
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "script.module.future" $ADDON_MANIFEST
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "script.module.simpleplugin3" $ADDON_MANIFEST
   xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "weather.gismeteo" $ADDON_MANIFEST
   #xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "script.skinshortcuts" $ADDON_MANIFEST
   #xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "skin.aeon.nox.5ae" $ADDON_MANIFEST
