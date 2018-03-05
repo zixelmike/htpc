@@ -4,14 +4,12 @@
 ################################################################################
 
 PKG_NAME="ffmpeg"
-# Current branch is: release/3.3-kodi | VERSION: 3.3.4
-PKG_VERSION="20f6654"
+PKG_VERSION="3.2.9"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
-PKG_URL="https://github.com/xbmc/FFmpeg/archive/${PKG_VERSION}.tar.gz"
-PKG_SOURCE_DIR="FFmpeg-${PKG_VERSION}*"
+PKG_URL="https://ffmpeg.org/releases/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain yasm:host zlib bzip2 openssl speex libvorbis intel-vaapi-driver libvdpau"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
@@ -19,10 +17,10 @@ PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert a
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-# Dependencies
-get_graphicdrivers
+# configure GPU drivers and dependencies:
+  get_graphicdrivers
 
-if [ "$DEBUG" = "yes" ]; then
+if [ "$DEBUG" = yes ]; then
   FFMPEG_DEBUG="--enable-debug --disable-stripping"
 else
   FFMPEG_DEBUG="--disable-debug --enable-stripping"
@@ -32,7 +30,7 @@ pre_configure_target() {
   cd $PKG_BUILD
   rm -rf .$TARGET_NAME
 
-# ffmpeg fails building for x86_64 with LTO support
+# ffmpeg fails building with LTO support
   strip_lto
 
 # ffmpeg fails running with GOLD support
@@ -59,7 +57,6 @@ configure_target() {
               --host-libs="-lm" \
               --extra-cflags="$CFLAGS" \
               --extra-ldflags="$LDFLAGS" \
-              --extra-libs="$FFMPEG_LIBS" \
               --disable-static \
               --enable-shared \
               --enable-gpl \
