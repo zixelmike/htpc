@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="vdr-plugin-vaapidevice"
-PKG_VERSION="6372704"
+PKG_VERSION="48a0f79"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/pesintta/vdr-plugin-vaapidevice"
@@ -24,6 +24,7 @@ make_target() {
 makeinstall_target() {
   make LIBDIR=/usr/lib/vdr \
        GIT_REV=$PKG_VERSION \
+       CONFIG=-DDEBUG \
        DESTDIR=$INSTALL \
        install
 }
