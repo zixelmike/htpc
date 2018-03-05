@@ -6,8 +6,8 @@ and https://github.com/LibreELEC/LibreELEC.tv/pull/1118
 tested with TT S2-3650CI and a HH90 rotor
 
 
---- a/drivers/media/dvb-frontends/lnbp22.c
-+++ b/drivers/media/dvb-frontends/lnbp22.c
+--- a/linux/drivers/media/dvb-frontends/lnbp22.c
++++ b/linux/drivers/media/dvb-frontends/lnbp22.c
 @@ -48,47 +48,95 @@ struct lnbp22 {
  	struct i2c_adapter *i2c;
  };
