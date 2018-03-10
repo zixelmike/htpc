@@ -35,3 +35,6 @@ fi
 if [ "$KODI_LANGUAGE_ADDONS" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET kodi-language-addons"
 fi
+
+# pvr addons
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pvr.iptvsimple"
