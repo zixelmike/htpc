@@ -1,0 +1,17 @@
+[Unit]
+Description=NoxBit Engine
+Requires=network-online.target
+After=network-online.target
+Before=kodi.service
+ConditionPathExists=/storage/.cache/services/noxbit.conf
+
+[Service]
+ExecStart=/usr/bin/STM-Hypervisor -config=/storage/.config/noxbit/noxbit.cfg
+ExecStop=/bin/kill -TERM $MAINPID
+TimeoutStopSec=5
+Restart=always
+RestartSec=2
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target
