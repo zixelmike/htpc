@@ -28,18 +28,19 @@ make_target() {
 
 makeinstall_target() {
   make PREFIX="/usr" \
-       LIBDIR=/usr/lib/vdr \
+       LIBDIR=/usr/lib \
        SKINDESIGNER_SCRIPTDIR="/storage/.config/vdr/plugins/skindesigner/scripts" \
        DESTDIR="$INSTALL" \
        install
 
   $MAKEINSTALL \
       PREFIX="/usr" \
-      LIBDIR=/usr/lib/vdr \
       SKINDESIGNER_SCRIPTDIR="/storage/.config/vdr/plugins/skindesigner/scripts"
 }
 
 post_makeinstall_target() {
+  mkdir -p $INSTALL/usr/lib/vdr
+    mv -f $INSTALL/usr/lib/libvdr-* $INSTALL/usr/lib/vdr
   mkdir -p $INSTALL/usr/config
     mv -f $INSTALL/storage/.config/vdr $INSTALL/usr/config
     rm -fr $INSTALL/storage
