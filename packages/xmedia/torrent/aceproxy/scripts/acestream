@@ -1,0 +1,13 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.ru
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.ru)
+################################################################################
+
+ACEHOME_DIR="/storage/.config/acestream"
+ACE_CONFIG="/run/alexelec/acestream.conf"
+
+[ ! -f $ACE_CONFIG ] && /usr/bin/ace-config
+. $ACE_CONFIG
+
+LD_LIBRARY_PATH=$ACEHOME_DIR/lib $ACEHOME_DIR/acestreamengine --lib-path $ACEHOME_DIR $ACE_ARGS

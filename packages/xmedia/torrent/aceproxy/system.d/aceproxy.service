@@ -1,17 +1,15 @@
 [Unit]
 Description=AceProxy server
 Requires=network-online.target
-Wants=acestream.service
-After=network-online.target acestream.service
+After=network-online.target
 Before=kodi.service vdr.service
-ConditionPathExists=/storage/.cache/services/aceproxy.conf
+ConditionPathExists=/storage/.cache/services/acestream.conf
 
 [Service]
-ExecStartPre=/usr/bin/aceproxy-config
+ExecStartPre=/usr/bin/ace-config
 ExecStart=/storage/.config/aceproxy/acehttp.py
-ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -TERM $MAINPID
-TimeoutStopSec=1
+TimeoutStopSec=5
 Restart=always
 RestartSec=2
 StartLimitInterval=0

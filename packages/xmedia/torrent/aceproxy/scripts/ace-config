@@ -5,22 +5,40 @@
 ################################################################################
 
 SERVICE_DIR="/storage/.cache/services"
+ACEHOME_DIR="/storage/.config/acestream"
 ACEPROXY_DIR="/storage/.config/aceproxy"
+ACELOG_FILE="/var/log/acestream.log"
 
 ACEPROXY_LOGIN="none"
 ACEPROXY_PASSW="none"
 
-[ -f $SERVICE_DIR/aceproxy.conf ] && . $SERVICE_DIR/aceproxy.conf
+[ -f $SERVICE_DIR/acestream.conf ] && . $SERVICE_DIR/acestream.conf
 
-# Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-if [ "$ACEPROXY_DEBUG" == "1" ]; then
-  sed -i -e "s/loglevel = logging.*/loglevel = logging\.DEBUG/" $ACEPROXY_DIR/aceconfig.py
-  rm -f $ACEPROXY_DIR/aceconfig.pyo
+ACE_ARGS="--client-console \
+--access-token alexelec \
+--bind-all \
+--log-file $ACELOG_FILE \
+--log-max-size 1048576"
+
+if [ -f $ACEHOME_DIR/aceuser.conf ]; then
+  . $ACEHOME_DIR/aceuser.conf
+  if [ -n "$ACE_USER_ARGS" ]; then
+    ACE_ARGS="$ACE_ARGS $ACE_USER_ARGS"
+  fi
 fi
 
-# Login and Password
+# AceStream & AceProxy debug
+if [ "$ACE_DEBUG" == "1" ]; then
+  sed -i -e "s/loglevel = logging.*/loglevel = logging\.DEBUG/" $ACEPROXY_DIR/aceconfig.py
+  rm -f $ACEPROXY_DIR/aceconfig.pyo
+  ACE_ARGS="$ACE_ARGS --debug-profile --log-debug 1 --log-modules root:D"
+fi
+
+# AceProxy Login and Password
 if [ "$ACEPROXY_LOGIN" != "none" -a "$ACEPROXY_PASSW" != "none" ]; then
   sed -i -e "s/email =.*/email = \'$ACEPROXY_LOGIN\'/" $ACEPROXY_DIR/aceconfig.py
   sed -i -e "s/password =.*/password = \'$ACEPROXY_PASSW\'/" $ACEPROXY_DIR/aceconfig.py
   rm -f $ACEPROXY_DIR/aceconfig.pyo
 fi
+
+echo "ACE_ARGS=\"$ACE_ARGS\"" > /run/alexelec/acestream.conf
