@@ -3,12 +3,12 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
-PKG_NAME="HTTPAceProxy"
-PKG_VERSION="4e95af6"
+PKG_NAME="aceproxy"
+PKG_VERSION="1.0.0"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/pepsik-kiev/HTTPAceProxy"
-PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
+PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain gevent psutil requests M2Crypto"
 PKG_SECTION="xmedia/torrent"
 PKG_SHORTDESC="AceProxy: Ace Stream HTTP Proxy"
@@ -21,12 +21,6 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/config/aceproxy
-    cp -PR aceclient \
-           plugins \
-           *.py \
-           $INSTALL/usr/config/aceproxy
-
   mkdir -p $INSTALL/usr/bin
     cp $PKG_DIR/scripts/* $INSTALL/usr/bin
 }

@@ -6,22 +6,21 @@
 
 SERVICE_DIR="/storage/.cache/services"
 ACEPROXY_DIR="/storage/.config/aceproxy"
-ACEPROXY_CONFDIR="$ACEPROXY_DIR/plugins/config"
 
-ACEPROXY_DEBUG="INFO"
 ACEPROXY_LOGIN="none"
 ACEPROXY_PASSW="none"
 
 [ -f $SERVICE_DIR/aceproxy.conf ] && . $SERVICE_DIR/aceproxy.conf
 
-rm -f $ACEPROXY_DIR/aceconfig.pyo
-
 # Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-sed -i -e "s/loglevel = logging.*/loglevel = logging\.$ACEPROXY_DEBUG/" $ACEPROXY_DIR/aceconfig.py
+if [ "$ACEPROXY_DEBUG" == "1" ]; then
+  sed -i -e "s/loglevel = logging.*/loglevel = logging\.DEBUG/" $ACEPROXY_DIR/aceconfig.py
+  rm -f $ACEPROXY_DIR/aceconfig.pyo
+fi
 
 # Login and Password
 if [ "$ACEPROXY_LOGIN" != "none" -a "$ACEPROXY_PASSW" != "none" ]; then
-  rm -f $ACEPROXY_CONFDIR/p2pproxy.pyo
-  sed -i -e "s/email =.*/email = \'$ACEPROXY_LOGIN\'/" $ACEPROXY_CONFDIR/p2pproxy.py
-  sed -i -e "s/password =.*/password = \'$ACEPROXY_PASSW\'/" $ACEPROXY_CONFDIR/p2pproxy.py
+  sed -i -e "s/email =.*/email = \'$ACEPROXY_LOGIN\'/" $ACEPROXY_DIR/aceconfig.py
+  sed -i -e "s/password =.*/password = \'$ACEPROXY_PASSW\'/" $ACEPROXY_DIR/aceconfig.py
+  rm -f $ACEPROXY_DIR/aceconfig.pyo
 fi

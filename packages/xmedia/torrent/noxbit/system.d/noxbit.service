@@ -2,7 +2,7 @@
 Description=NoxBit Engine
 Requires=network-online.target
 After=network-online.target
-Before=kodi.service
+Before=kodi.service vdr.service
 ConditionPathExists=/storage/.cache/services/noxbit.conf
 
 [Service]
