@@ -37,4 +37,5 @@ if [ "$KODI_LANGUAGE_ADDONS" = "yes" ]; then
 fi
 
 # pvr addons
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pvr.vdr.vnsi"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pvr.iptvsimple"
