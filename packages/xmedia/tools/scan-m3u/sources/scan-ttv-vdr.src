@@ -1,0 +1,241 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+SERVICE_DIR="/storage/.cache/services"
+
+VDR_DIR="/storage/.config/vdr"
+ACE_DIR="/storage/.config/acestream/ttv-m3u"
+TTV_DIR="$VDR_DIR/ttv"
+TMP_DIR="/tmp/vdr-ttv"
+
+JSON_FILE="$TMP_DIR/acelive.json"
+JSON_FILE_GZ="$ACE_DIR/acelive.json.gz"
+
+TMP_LIST="$TMP_DIR/tmp-acettv.list"
+TMP_CHLS="$TMP_DIR/channels.ttv"
+TMP_SETUP="$TMP_DIR/setup.tmp"
+
+VDR_CHFILE_ORG="$VDR_DIR/channels.conf"
+VDR_CHFILE_TTV="$TTV_DIR/channels.conf"
+
+URL_FILE="$ACE_DIR/trash-url.conf"
+URL_TRASH="http://pomoyka.win"
+
+if [ -f "$URL_FILE" ]; then
+  . $URL_FILE
+  [ -n "$TRASH" ] && URL_TRASH=$TRASH
+fi
+
+URL_JSON="$URL_TRASH/trash/ttv-list/acelive.json"
+URL_M3U=$(echo $URL_JSON | sed 's|\.json|\/|; s/:/%3A/g')
+
+[ -f $SERVICE_DIR/acettv.conf ] && . $SERVICE_DIR/acettv.conf
+[ -f $SERVICE_DIR/acerun.conf ] && . $SERVICE_DIR/acerun.conf
+
+# del categories
+del_cat () {
+  CAT=$1
+  sed "/^$CAT/d" -i $TMP_LIST
+}
+
+# create VDR channels
+build_vdr () {
+INFILE=$1
+cat $INFILE | 
+  while read -r LINE ; do
+      CH_CAT=`echo $LINE | awk -F\\# '{print $1}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
+      CH_NAME=`echo $LINE | awk -F\\# '{print $2}' |  sed 's/:/-/; s/^[ \t]*//; s/[ \t]*$//'`
+      CH_PATH=`echo $LINE | awk -F\\# '{print $3}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
+
+      if [ "$CH_CAT" != "$CH_CAT_TEMP" ]; then
+          echo ":TTV $CH_CAT" >> $INFILE.vdr
+      fi
+      echo "$CH_NAME;IPTV:@CN_NUM@:S=0|P=0|F=CURL|U=http%3A//127.0.0.1%3A6878/ace/getstream?url=${URL_M3U}${CH_PATH}&.mp4|A=0:I:0:256:257:0:0:@CN_NUM@:555:1:0" >> $INFILE.vdr
+      echo "$CH_NAME = 0;1073741825;I-555-1-@CN_NUM@" >> $INFILE.setup
+      CH_CAT_TEMP=$CH_CAT
+  done
+  rm -f $INFILE
+}
+
+# AceStream playlist for VDR
+create_list () {
+  STAT_OLD=
+  mkdir -p $ACE_DIR
+
+  if [ -f "$JSON_FILE_GZ" ]; then
+    STAT_OLD=`stat $JSON_FILE_GZ | grep 'Modify:'`
+  fi
+
+  curl -s -k --connect-timeout 5 --max-time 20 -R -z "$JSON_FILE_GZ" -o "$JSON_FILE_GZ" -H "Accept-Encoding: gzip" "$URL_JSON"
+
+  if [ ! -f "$JSON_FILE_GZ" ]; then
+      echo "Error: Could not load json-file."
+      exit
+  fi
+
+  STAT_NEW=`stat $JSON_FILE_GZ | grep 'Modify:'`
+  if [ "$STAT_OLD" == "$STAT_NEW" ]; then
+    if [ -f "$ACE_M3U" -a -f "$ACE_M3U_DIRECT" ]; then
+        echo "AceStream: You already actual playlist."
+        exit
+    fi
+  fi
+
+  rm -rf $TMP_DIR
+  mkdir -p $TMP_DIR
+  gunzip -c "$JSON_FILE_GZ" > "$JSON_FILE"
+  /usr/bin/jq -r '.|= sort_by(.cat,.name)|.[]|select(.source=="ttv.json")|select(.name!=null)|select(.cat!=null) | .cat + " # " + .name + " # " + .fname + " # " + .cid' $JSON_FILE > $TMP_LIST
+
+  # del categories
+  [ "$CAT_SHOW" == 0 ] && del_cat "Развлекательные"
+  [ "$CAT_COMM" == 0 ] && del_cat "Общие"
+  [ "$CAT_FILMS" == 0 ] && del_cat "Фильмы"
+  [ "$CAT_EROS" == 0 ] && del_cat "Эротика"
+  [ "$CAT_NEWS" == 0 ] && del_cat "Новостные"
+
+  [ "$CAT_REGION" != 1 ] && del_cat "Региональные"
+  [ "$CAT_MUSIC" != 1 ] && del_cat "Музыка"
+  [ "$CAT_CHILDREN" != 1 ] && del_cat "Детские"
+  [ "$CAT_SPORT" != 1 ] && del_cat "Спорт"
+  [ "$CAT_RELIGION" != 1 ] && del_cat "Религиозные"
+  [ "$CAT_MAN" != 1 ] && del_cat "Мужские"
+  [ "$CAT_LEARN" != 1 ] && del_cat "Познавательные"
+
+  sed '/^$/d' -i $TMP_LIST
+
+  PART_DIR="$TMP_DIR/parts"
+  rm -fr $PART_DIR
+  mkdir -p $PART_DIR
+  COUNT_LINES=`wc -l $TMP_LIST | awk '{print $1}'`
+
+  if [ $COUNT_LINES -gt 200 ]; then
+    sed -n '1,100p' $TMP_LIST > $PART_DIR/ttv.part1
+    sed -n '101,200p' $TMP_LIST > $PART_DIR/ttv.part2
+    sed -e '1,200d' -i $TMP_LIST
+    COUNT_LINES=`wc -l $TMP_LIST | awk '{print $1}'`
+    if [ $COUNT_LINES -gt 200 ]; then
+      sed -n '1,100p' $TMP_LIST > $PART_DIR/ttv.part3
+      sed -n '101,200p' $TMP_LIST > $PART_DIR/ttv.part4
+      sed -e '1,200d' -i $TMP_LIST
+      COUNT_LINES=`wc -l $TMP_LIST | awk '{print $1}'`
+      if [ $COUNT_LINES -gt 200 ]; then
+        sed -n '1,100p' $TMP_LIST > $PART_DIR/ttv.part5
+        sed -n '101,200p' $TMP_LIST > $PART_DIR/ttv.part6
+        sed -e '1,200d' -i $TMP_LIST
+        COUNT_LINES=`wc -l $TMP_LIST | awk '{print $1}'`
+        if [ $COUNT_LINES -gt 200 ]; then
+          sed -n '1,100p' $TMP_LIST > $PART_DIR/ttv.part7
+          sed -n '101,$p' $TMP_LIST > $PART_DIR/ttv.part8
+        else
+          cp -f $TMP_LIST $PART_DIR/ttv.part7
+        fi
+      else
+        cp -f $TMP_LIST $PART_DIR/ttv.part5
+      fi
+    else
+      cp -f $TMP_LIST $PART_DIR/ttv.part3
+    fi
+  else
+    if [ $COUNT_LINES -gt 100 ]; then
+      sed -n '1,50p' $TMP_LIST > $PART_DIR/ttv.part1
+      sed -n '51,$p' $TMP_LIST > $PART_DIR/ttv.part2
+    else
+      cp -f $TMP_LIST $PART_DIR/ttv.part1
+    fi
+  fi
+
+  for fpart in $(ls $PART_DIR); do
+    build_vdr "$PART_DIR/$fpart" &
+  done
+
+  while true; do
+    usleep 100
+    if [ -d "$PART_DIR" ]; then
+      fcount=`find $PART_DIR -name "ttv.part[1-9]" | wc -l  2>/dev/null`
+      [ $fcount -eq 0 ] && break
+    else
+      break
+    fi
+  done
+
+  PART_SETUP=`ls $PART_DIR/*.setup`
+  cat $PART_SETUP >> $TMP_SETUP
+
+  LASTGR=''
+  LASTGR_TMP=''
+  for vdr_part in $(ls $PART_DIR/*.vdr); do
+    if [ ! -z "$LASTGR" ]; then
+      sed "/^$LASTGR/d" -i $vdr_part
+      LASTGR_TMP=$LASTGR
+    fi
+    cat $vdr_part >> $TMP_CHLS
+    LASTGR=`grep ':TTV' $vdr_part | tail -1`
+    [ -z "$LASTGR" ] && LASTGR=$LASTGR_TMP
+  done
+}
+
+get_epg_list () {
+XMLTV_LOCATION_WEB="http://api.torrent-tv.ru/ttv.xmltv.xml.gz"
+XMLTV_DIR="/storage/.config/vdr/plugins/xmltv2vdr/epgsources"
+XMLTV_FILE_GZ="$XMLTV_DIR/vdr_epg_ttv.gz"
+
+mkdir -p $XMLTV_DIR
+
+curl -s --connect-timeout 5 --max-time 20 -R -z "$XMLTV_FILE_GZ" -o "$XMLTV_FILE_GZ" "$XMLTV_LOCATION_WEB"
+[ ! -e "$XMLTV_FILE_GZ" ] && exit 1
+zcat "$XMLTV_FILE_GZ" | sed -n '/^<channel id=/p; /^<display-name lang=/p;' | sed 's/^<channel id=\"//; s/".*//; :a; /$/N; s/\n/ # /; s/<display-name.*\">//; s/<.*>//; s/:/-/; s/\r//' | sort -k 1 > $TMP_DIR/xmltv2vdr.list
+}
+
+channel_num () {
+NUM_ST=$1
+NUM_CH=$1
+
+get_epg_list
+
+# epgsources dir: vdr_epg_ttv
+echo "file" > $TMP_DIR/vdr_epg_ttv.epgsources
+echo "7" >> $TMP_DIR/vdr_epg_ttv.epgsources
+
+# xmltv2vdr dir: vdr_epg_ttv
+echo "#no pin" > $TMP_DIR/vdr_epg_ttv.xmltv2vdr
+echo "1;0;127;10" >> $TMP_DIR/vdr_epg_ttv.xmltv2vdr
+
+cat $TMP_SETUP |  
+  while read -r LINE ; do
+      CH_NAME=`echo $LINE | sed 's/ = .*$//'`
+      CH_EPG=`grep "# ${CH_NAME}$" "$TMP_DIR/xmltv2vdr.list" | sed 's/ # .*$//'`
+      CH_IDS=`echo $LINE | sed "s|@CN_NUM@|${NUM_ST}|; s/^.* = //"`
+
+      #echo "$CH_NAME # $CH_EPG # $CH_IDS"
+      if [ ! -z "$CH_EPG" ]; then
+          echo "xmltv2vdr.channel.$CH_EPG = $CH_IDS" >> $TMP_DIR/setup.conf
+          echo "$CH_EPG;$CH_NAME" >> $TMP_DIR/vdr_epg_ttv.epgsources
+          echo "$CH_EPG" >> $TMP_DIR/vdr_epg_ttv.xmltv2vdr
+      fi
+      NUM_ST=$( expr $NUM_ST + 1 )
+  done
+
+cat $TMP_CHLS |  
+  while read -r LINE ; do
+      CAT=`echo $LINE | grep '^:TTV'`
+      if [ ! -z "$CAT" ]; then
+          echo $LINE >> $TMP_DIR/channels.conf
+          continue
+      fi
+      NEW_LINE=`echo $LINE | sed "s|@CN_NUM@|$NUM_CH|g"`
+      echo $NEW_LINE >> $TMP_DIR/channels.conf
+      NUM_CH=$( expr $NUM_CH + 1 )
+  done
+}
+
+create_list
+
+CN_NUM=$NUM
+[ -z "$CN_NUM" ] && CN_NUM=1000
+channel_num $CN_NUM
+#rm -fr $TMP_DIR
+
+exit 0

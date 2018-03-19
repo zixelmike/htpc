@@ -25,8 +25,7 @@ pre_configure_target() {
 make_target() {
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f m3u_info.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f scan-m3u.src
-  CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f scan-ttv.src
-  CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f live-ttv.src
+  CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f scan-ttv-vdr.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f live-ttv-get.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f ttv-direct-get.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f ttv-logo.src
@@ -37,8 +36,7 @@ makeinstall_target() {
     cp m3u_kill $INSTALL/usr/bin/m3u_kill
     cp m3u_info.src.x $INSTALL/usr/bin/m3u_info
     cp scan-m3u.src.x $INSTALL/usr/bin/scan-m3u
-    cp scan-ttv.src.x $INSTALL/usr/bin/scan-ttv
-    cp live-ttv.src.x $INSTALL/usr/bin/live-ttv
+    cp scan-ttv-vdr.src.x $INSTALL/usr/bin/scan-ttv-vdr
     cp live-ttv-get.src.x $INSTALL/usr/bin/live-ttv-get
     cp ttv-direct-get.src.x $INSTALL/usr/bin/ttv-direct-get
     cp ttv-logo.src.x $INSTALL/usr/bin/ttv-logo
