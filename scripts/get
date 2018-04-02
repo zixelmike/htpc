@@ -22,7 +22,7 @@ if [ -z "$1" ]; then
   done
 fi
 
-[ -z "$PKG_URL" -o -z "$PKG_SOURCE_NAME" ] && exit 0
+[ -z "$PKG_URL" -o -z "$PKG_SOURCE_NAME" -o "$PKG_URL" == "none" ] && exit 0
 
 mkdir -p $SOURCES/$1
 
