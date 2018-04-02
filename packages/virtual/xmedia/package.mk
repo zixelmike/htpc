@@ -20,7 +20,7 @@ PKG_AUTORECONF="no"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mc scan-m3u scan-s2 wget ImageMagick"
 
 # tv-services
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET oscam vdr"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET tvheadend oscam vdr"
 
 # vdr-plugins
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdr-plugin-dvbapi"
