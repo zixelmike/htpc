@@ -9,7 +9,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvheadend.org"
 PKG_URL="none"
-PKG_DEPENDS_TARGET="toolchain curl dvb-apps ffmpegx libdvbcsa libiconv openssl pngquant:host Python:host yasm libva-intel-driver"
+PKG_DEPENDS_TARGET="toolchain curl dvb-apps ffmpegx libdvbcsa libiconv openssl pngquant:host Python:host yasm intel-vaapi-driver"
 PKG_SECTION="xmedia/tvservice"
 PKG_SHORTDESC="Tvheadend: a TV streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, and Analog video (V4L) as input sources."
 PKG_LONGDESC="Tvheadend is a TV streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, and Analog video (V4L) as input sources. It also comes with a powerful and easy to use web interface both used for configuration and day-to-day operations, such as searching the EPG and scheduling recordings. Even so, the most notable feature of Tvheadend is how easy it is to set up: Install it, navigate to the web user interface, drill into the TV adapters tab, select your current location and Tvheadend will start scanning channels and present them to you in just a few minutes. If installing as an Addon a reboot is needed"
@@ -45,7 +45,7 @@ PKG_TVH_TRANSCODING="\
   --disable-libvpx_static \
   --disable-libx264_static \
   --disable-libx265_static \
-  --disable-libvpx \
+  --enable-libvpx \
   --enable-libav \
   --enable-libfdkaac \
   --enable-libopus \
@@ -76,7 +76,6 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --enable-epoll \
                            --enable-inotify \
                            --enable-pngquant \
-                           --enable-ccdebug \
                            --nowerror \
                            --python=$TOOLCHAIN/bin/python"
 
