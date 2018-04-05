@@ -17,11 +17,12 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_LOCALE_INSTALL="yes"
 
-unpack() {
+#colors
   RED="\033[0;31m"
   YELLOW="\033[1;33m"
   ENDCOLOR="\033[0m"
 
+unpack() {
   git clone -b 'master' https://github.com/tvheadend/tvheadend.git $PKG_BUILD
   cd $PKG_BUILD
   git reset --hard $PKG_VERSION
@@ -76,6 +77,7 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --enable-epoll \
                            --enable-inotify \
                            --enable-pngquant \
+                           --enable-ccdebug \
                            --nowerror \
                            --python=$TOOLCHAIN/bin/python"
 
