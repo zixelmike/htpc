@@ -17,16 +17,33 @@ PKG_SHORTDESC="Vulkan Installable Client Driver (ICD) Loader."
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_CMAKE_OPTS_TARGET="-DBUILD_WSI_XLIB_SUPPORT=On \
-		       -DBUILD_TESTS=Off \
-		       -DBUILD_LAYERS=Off \
-		       -DBUILD_DEMOS=On \
-		       -DBUILD_VKJSON=Off \
-		       -DBUILD_WSI_WAYLAND_SUPPORT=Off \
-		       -DBUILD_WSI_MIR_SUPPORT=Off"
+PKG_CMAKE_OPTS_TARGET="-DBUILD_WSI_XLIB_SUPPORT=ON \
+		       -DBUILD_TESTS=OFF \
+		       -DBUILD_LAYERS=OFF \
+		       -DBUILD_DEMOS=ON \
+		       -DBUILD_VKJSON=OFF \
+		       -DBUILD_WSI_WAYLAND_SUPPORT=OFF \
+		       -DBUILD_WSI_MIR_SUPPORT=OFF"
 
 pre_configure_target() {
-  cd ..
+  cd $PKG_BUILD
   ./update_external_sources.sh
-  cd -
+}
+
+make_target() {
+  ## workaround for gcc-6
+  mv -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.org || true
+  mv -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.org || true
+  cp -fP $SYSROOT_PREFIX/usr/lib/libstdc++.so.6 /usr/lib/x86_64-linux-gnu
+  cp -fP $SYSROOT_PREFIX/usr/lib/libstdc++.so.6.0.22 /usr/lib/x86_64-linux-gnu
+  ## workaround for gcc-6
+
+  make
+
+  ## workaround for gcc-6
+  rm -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6
+  rm -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.22
+  mv -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6.org /usr/lib/x86_64-linux-gnu/libstdc++.so.6 || true
+  mv -f /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.org /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 || true
+  ## workaround for gcc-6
 }
