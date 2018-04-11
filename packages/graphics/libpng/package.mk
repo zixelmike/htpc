@@ -41,8 +41,4 @@ post_makeinstall_target() {
       -i $SYSROOT_PREFIX/usr/bin/libpng*-config
 
   rm -rf $INSTALL/usr/bin
-
-  cd $INSTALL/usr/lib
-    ln -sf libpng16.so.16.25.0 libpng12.so.0
-  cd -
 }
