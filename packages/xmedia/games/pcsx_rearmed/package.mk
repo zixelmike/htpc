@@ -23,8 +23,12 @@ configure_target() {
   rm -rf .$TARGET_NAME
 }
 
+pre_build_target() {
+  export GIT_VERSION=$PKG_VERSION
+}
+
 make_target() {
-   make -f Makefile.libretro GIT_VERSION=$PKG_VERSION
+   make -f Makefile.libretro
 }
 
 makeinstall_target() {
