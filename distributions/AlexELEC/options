@@ -199,6 +199,6 @@
   ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
 # Default size of system partition, in MB, eg. 1024
-  SYSTEM_SIZE=1024
+  SYSTEM_SIZE=768
 # Default system partition offset, in sectors, eg. 2048
   SYSTEM_PART_START=8192
