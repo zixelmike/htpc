@@ -1,0 +1,198 @@
+diff -Naurp retroarch-ab00d58/frontend/drivers/platform_null.c retroarch-ab00d58-patch/frontend/drivers/platform_null.c
+--- retroarch-ab00d58/frontend/drivers/platform_null.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/frontend/drivers/platform_null.c	2018-04-12 10:18:20.000000000 +0300
+@@ -41,9 +41,7 @@ frontend_ctx_driver_t frontend_ctx_null
+    NULL,                         /* destroy_sighandler_state */
+    NULL,                         /* attach_console */
+    NULL,                         /* detach_console */
+-#ifdef HAVE_LAKKA
+-   NULL,                         /* get_lakka_version */
+-#endif
++   NULL,                         /* get_ae_version */
+    NULL,                         /* watch_path_for_changes */
+    NULL,                         /* check_for_path_changes */
+    "null",
+diff -Naurp retroarch-ab00d58/frontend/drivers/platform_unix.c retroarch-ab00d58-patch/frontend/drivers/platform_unix.c
+--- retroarch-ab00d58/frontend/drivers/platform_unix.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/frontend/drivers/platform_unix.c	2018-04-12 10:17:29.000000000 +0300
+@@ -1230,8 +1230,7 @@ static void frontend_unix_get_os(char *s
+ #endif
+ }
+ 
+-#ifdef HAVE_LAKKA
+-static void frontend_unix_get_lakka_version(char *s,
++static void frontend_linux_get_ae_version(char *s,
+       size_t len)
+ {
+    char version[128];
+@@ -1248,7 +1247,6 @@ static void frontend_unix_get_lakka_vers
+ 
+    pclose(command_file);
+ }
+-#endif
+ 
+ static void frontend_unix_get_env(int *argc,
+       char *argv[], void *data, void *params_data)
+@@ -2451,9 +2449,7 @@ frontend_ctx_driver_t frontend_ctx_unix
+    frontend_unix_destroy_signal_handler_state,
+    NULL,                         /* attach_console */
+    NULL,                         /* detach_console */
+-#ifdef HAVE_LAKKA
+-   frontend_unix_get_lakka_version,    /* get_lakka_version */
+-#endif
++   frontend_linux_get_ae_version,    /* get_ae_version */
+    frontend_unix_watch_path_for_changes,
+    frontend_unix_check_for_path_changes,
+ #ifdef ANDROID
+diff -Naurp retroarch-ab00d58/frontend/frontend_driver.h retroarch-ab00d58-patch/frontend/frontend_driver.h
+--- retroarch-ab00d58/frontend/frontend_driver.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/frontend/frontend_driver.h	2018-04-12 10:19:21.000000000 +0300
+@@ -100,9 +100,7 @@ typedef struct frontend_ctx_driver
+    void (*destroy_signal_handler_state)(void);
+    void (*attach_console)(void);
+    void (*detach_console)(void);
+-#ifdef HAVE_LAKKA
+-   void (*get_lakka_version)(char *, size_t);
+-#endif
++   void (*get_ae_version)(char *, size_t);
+    void (*watch_path_for_changes)(struct string_list *list, int flags, path_change_data_t **change_data);
+    bool (*check_for_path_changes)(path_change_data_t *change_data);
+ 
+diff -Naurp retroarch-ab00d58/intl/msg_hash_de.h retroarch-ab00d58-patch/intl/msg_hash_de.h
+--- retroarch-ab00d58/intl/msg_hash_de.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_de.h	2018-04-12 10:23:35.000000000 +0300
+@@ -1455,8 +1455,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "JACK-Unterstützung")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "KMS/EGL-Unterstützung")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Lakka-Version")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Alex@ELEC-Version")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "LibretroDB-Unterstützung")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_es.h retroarch-ab00d58-patch/intl/msg_hash_es.h
+--- retroarch-ab00d58/intl/msg_hash_es.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_es.h	2018-04-12 10:25:13.000000000 +0300
+@@ -2518,8 +2518,8 @@ MSG_HASH(
+ 	"Soporte de KMS/EGL"
+ 	)
+ MSG_HASH(
+-	MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-	"Versión de Lakka"
++	MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++	"Versión de Alex@ELEC"
+ 	)
+ MSG_HASH(
+ 	MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_fr.h retroarch-ab00d58-patch/intl/msg_hash_fr.h
+--- retroarch-ab00d58/intl/msg_hash_fr.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_fr.h	2018-04-12 10:25:13.000000000 +0300
+@@ -1427,8 +1427,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "Support de JACK")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "Support de KMS/EGL")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Version de Lakka")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Version de Alex@ELEC")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "Support de LibretroDB")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_it.h retroarch-ab00d58-patch/intl/msg_hash_it.h
+--- retroarch-ab00d58/intl/msg_hash_it.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_it.h	2018-04-12 10:24:12.000000000 +0300
+@@ -1455,8 +1455,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "Supporto JACK ")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "Supporto KMS/EGL ")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Versione Lakka")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Versione Alex@ELEC")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "Supporto LibretroDB ")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_pl.h retroarch-ab00d58-patch/intl/msg_hash_pl.h
+--- retroarch-ab00d58/intl/msg_hash_pl.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_pl.h	2018-04-12 10:22:53.000000000 +0300
+@@ -1535,8 +1535,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "Obsługa JACK")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "Obsługa KMS/EGL")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Wersja Lakka")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Wersja Alex@ELEC")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "Obsługa LibretroDB")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_ru.h retroarch-ab00d58-patch/intl/msg_hash_ru.h
+--- retroarch-ab00d58/intl/msg_hash_ru.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_ru.h	2018-04-12 10:21:59.000000000 +0300
+@@ -1436,8 +1436,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "Поддержка JACK")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "поддержка KMS/EGL")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Версия Lakka")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Версия Alex@ELEC")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "Поддержка LibretroDB")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_us.h retroarch-ab00d58-patch/intl/msg_hash_us.h
+--- retroarch-ab00d58/intl/msg_hash_us.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_us.h	2018-04-12 10:21:06.000000000 +0300
+@@ -1541,8 +1541,8 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_IN
+       "JACK support")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_KMS_SUPPORT,
+       "KMS/EGL support")
+-MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
+-      "Lakka Version")
++MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
++      "Alex@ELEC Version")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBRETRODB_SUPPORT,
+       "LibretroDB support")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
+diff -Naurp retroarch-ab00d58/menu/menu_displaylist.c retroarch-ab00d58-patch/menu/menu_displaylist.c
+--- retroarch-ab00d58/menu/menu_displaylist.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/menu/menu_displaylist.c	2018-04-12 10:27:23.000000000 +0300
+@@ -545,13 +545,12 @@ static int menu_displaylist_parse_system
+             MENU_ENUM_LABEL_SYSTEM_INFO_ENTRY,
+             MENU_SETTINGS_CORE_INFO_NONE, 0, 0);
+ 
+-#ifdef HAVE_LAKKA
+-      if (frontend->get_lakka_version)
++      if (frontend->get_ae_version)
+       {
+-         frontend->get_lakka_version(tmp2, sizeof(tmp2));
++         frontend->get_ae_version(tmp2, sizeof(tmp2));
+ 
+          fill_pathname_join_concat_noext(tmp,
+-               msg_hash_to_str(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION),
++               msg_hash_to_str(MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION),
+                ": ",
+                tmp2,
+                sizeof(tmp));
+@@ -559,7 +558,6 @@ static int menu_displaylist_parse_system
+                MENU_ENUM_LABEL_SYSTEM_INFO_ENTRY,
+                MENU_SETTINGS_CORE_INFO_NONE, 0, 0);
+       }
+-#endif
+ 
+       if (frontend->get_name)
+       {
+diff -Naurp retroarch-ab00d58/msg_hash.h retroarch-ab00d58-patch/msg_hash.h
+--- retroarch-ab00d58/msg_hash.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/msg_hash.h	2018-04-12 10:28:15.000000000 +0300
+@@ -1560,7 +1560,7 @@ enum msg_hash_enums
+ 
+    /* System information */
+ 
+-   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LAKKA_VERSION,
++   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_AE_VERSION,
+    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_DYNAMIC_SUPPORT,
+    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_BUILD_DATE,
+    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_GIT_VERSION,
