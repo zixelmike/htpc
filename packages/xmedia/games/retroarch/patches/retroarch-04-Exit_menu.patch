@@ -1,0 +1,207 @@
+diff -Naurp retroarch-ab00d58/command.c retroarch-ab00d58-patch/command.c
+--- retroarch-ab00d58/command.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/command.c	2018-04-12 11:04:12.000000000 +0300
+@@ -18,6 +18,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <ctype.h>
++#include <fcntl.h>
+ 
+ #include <compat/strl.h>
+ #include <compat/posix_string.h>
+@@ -1811,7 +1812,7 @@ bool command_event(enum event_command cm
+       case CMD_EVENT_LOAD_CORE:
+          command_event(CMD_EVENT_LOAD_CORE_PERSIST, NULL);
+ #ifndef HAVE_DYNAMIC
+-         command_event(CMD_EVENT_QUIT, NULL);
++         retroarch_main_quit();
+ #endif
+          break;
+       case CMD_EVENT_LOAD_STATE:
+@@ -1925,7 +1926,15 @@ bool command_event(enum event_command cm
+          }
+          break;
+       case CMD_EVENT_QUIT:
+-         return retroarch_main_quit();
++         {
++            bool ra_quit = retroarch_main_quit();
++            /* exit to Kodi */
++            remove("/var/lock/start.retro");
++            creat("/var/lock/start.kodi", S_IRUSR|S_IROTH);
++            system("systemctl start kodi.service");
++            system("systemctl stop retroarch.service");
++            return ra_quit;
++         }
+       case CMD_EVENT_CHEEVOS_HARDCORE_MODE_TOGGLE:
+ #ifdef HAVE_CHEEVOS
+          cheevos_toggle_hardcore_mode();
+@@ -2283,20 +2292,16 @@ TODO: Add a setting for these tweaks */
+          }
+          break;
+       case CMD_EVENT_SHUTDOWN:
+-#if defined(__linux__) && !defined(ANDROID)
+          runloop_msg_queue_push(msg_hash_to_str(MSG_VALUE_SHUTTING_DOWN), 1, 180, true);
+          command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
+-         command_event(CMD_EVENT_QUIT, NULL);
+-         system("shutdown -P now");
+-#endif
++         retroarch_main_quit();
++         system("systemctl poweroff");
+          break;
+       case CMD_EVENT_REBOOT:
+-#if defined(__linux__) && !defined(ANDROID)
+          runloop_msg_queue_push(msg_hash_to_str(MSG_VALUE_REBOOTING), 1, 180, true);
+          command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
+-         command_event(CMD_EVENT_QUIT, NULL);
+-         system("shutdown -r now");
+-#endif
++         retroarch_main_quit();
++         system("systemctl reboot");
+          break;
+       case CMD_EVENT_RESUME:
+          rarch_menu_running_finished();
+@@ -2355,7 +2360,7 @@ TODO: Add a setting for these tweaks */
+          if (!frontend_driver_set_fork(FRONTEND_FORK_RESTART))
+             return false;
+ #ifndef HAVE_DYNAMIC
+-         command_event(CMD_EVENT_QUIT, NULL);
++         retroarch_main_quit();
+ #endif
+          break;
+       case CMD_EVENT_MENU_SAVE_CURRENT_CONFIG:
+diff -Naurp retroarch-ab00d58/intl/msg_hash_de.h retroarch-ab00d58-patch/intl/msg_hash_de.h
+--- retroarch-ab00d58/intl/msg_hash_de.h	2018-04-12 10:23:35.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_de.h	2018-04-12 11:13:55.000000000 +0300
+@@ -1172,7 +1172,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Privatsphäre")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "RetroArch beenden")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Analog unterstützt")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_es.h retroarch-ab00d58-patch/intl/msg_hash_es.h
+--- retroarch-ab00d58/intl/msg_hash_es.h	2018-04-12 10:25:13.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_es.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1951,7 +1951,7 @@ MSG_HASH(
+ 	)
+ MSG_HASH(
+ 	MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-	"Cerrar RetroArch"
++	"Exit to Kodi"
+ 	)
+ MSG_HASH(
+ 	MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_fr.h retroarch-ab00d58-patch/intl/msg_hash_fr.h
+--- retroarch-ab00d58/intl/msg_hash_fr.h	2018-04-12 10:25:13.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_fr.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1160,7 +1160,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Confidentialité")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Quitter RetroArch")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Support de l'analogique")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_it.h retroarch-ab00d58-patch/intl/msg_hash_it.h
+--- retroarch-ab00d58/intl/msg_hash_it.h	2018-04-12 10:24:12.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_it.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1172,7 +1172,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Privacy")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Esci da RetroArch")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Analogici supportati")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_pl.h retroarch-ab00d58-patch/intl/msg_hash_pl.h
+--- retroarch-ab00d58/intl/msg_hash_pl.h	2018-04-12 10:22:53.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_pl.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1250,7 +1250,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Prywatność")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Zamknij RetroArch")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Obsługiwany analog")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_pt_pt.h retroarch-ab00d58-patch/intl/msg_hash_pt_pt.h
+--- retroarch-ab00d58/intl/msg_hash_pt_pt.h	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_pt_pt.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1140,7 +1140,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Privacidade")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Sair do RetroArch")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Analógico suportado")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_ru.h retroarch-ab00d58-patch/intl/msg_hash_ru.h
+--- retroarch-ab00d58/intl/msg_hash_ru.h	2018-04-12 10:21:59.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_ru.h	2018-04-12 11:16:17.000000000 +0300
+@@ -1169,7 +1169,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Конфиденциальность")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Выход из RetroArch")
++      "Выход -> Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Поддерживается аналоговый сигнал")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_us.h retroarch-ab00d58-patch/intl/msg_hash_us.h
+--- retroarch-ab00d58/intl/msg_hash_us.h	2018-04-12 10:21:06.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_us.h	2018-04-12 11:10:32.000000000 +0300
+@@ -1250,7 +1250,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
+       "Privacy")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-      "Quit RetroArch")
++      "Exit to Kodi")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
+       "Analog supported")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
+diff -Naurp retroarch-ab00d58/menu/menu_setting.c retroarch-ab00d58-patch/menu/menu_setting.c
+--- retroarch-ab00d58/menu/menu_setting.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/menu/menu_setting.c	2018-04-12 11:07:40.000000000 +0300
+@@ -2503,19 +2503,6 @@ static bool setting_append_list(
+                parent_group);
+          settings_data_list_current_add_flags(list, list_info, SD_FLAG_LAKKA_ADVANCED);
+ 
+-#if !defined(IOS)
+-         /* Apple rejects iOS apps that let you forcibly quit them. */
+-         CONFIG_ACTION(
+-               list, list_info,
+-               MENU_ENUM_LABEL_QUIT_RETROARCH,
+-               MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
+-               &group_info,
+-               &subgroup_info,
+-               parent_group);
+-         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_QUIT);
+-#endif
+-
+-#if defined(HAVE_LAKKA)
+          CONFIG_ACTION(
+                list, list_info,
+                MENU_ENUM_LABEL_REBOOT,
+@@ -2533,7 +2520,15 @@ static bool setting_append_list(
+                &subgroup_info,
+                parent_group);
+          menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_SHUTDOWN);
+-#endif
++
++         CONFIG_ACTION(
++               list, list_info,
++               MENU_ENUM_LABEL_QUIT_RETROARCH,
++               MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
++               &group_info,
++               &subgroup_info,
++               parent_group);
++         menu_settings_list_current_add_cmd(list, list_info, CMD_EVENT_QUIT);
+ 
+          CONFIG_ACTION(
+                list, list_info,
