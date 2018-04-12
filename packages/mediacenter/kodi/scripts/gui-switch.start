@@ -10,13 +10,16 @@ LOCK_DIR="/var/lock"
 SERVICE_DIR="/storage/.cache/services"
 KODI_SETTINGS="/storage/.kodi/userdata/advancedsettings.xml"
 
+# add default config file to HOME dir Kodi
+if [ ! -f "$KODI_SETTINGS" ] ; then
+  cp /usr/share/kodi/system/advancedsettings.xml $KODI_SETTINGS
+fi
+
 # set exit button
-if [ -f "$KODI_SETTINGS" ] ; then
-  if [ "$GPUTYPE" == "INTEL" ]; then
-      sed -i -e "s|<showexitbutton>.*$|<showexitbutton>false</showexitbutton>|" $KODI_SETTINGS
-  else
-      sed -i -e "s|<showexitbutton>.*$|<showexitbutton>true</showexitbutton>|" $KODI_SETTINGS
-  fi
+if [ "$GPUTYPE" == "INTEL" ]; then
+  sed -i -e "s|<showexitbutton>.*$|<showexitbutton>false</showexitbutton>|" $KODI_SETTINGS
+else
+  sed -i -e "s|<showexitbutton>.*$|<showexitbutton>true</showexitbutton>|" $KODI_SETTINGS
 fi
 
 if [ -f "$SERVICE_DIR/shell.conf" ]; then
