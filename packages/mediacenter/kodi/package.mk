@@ -251,6 +251,8 @@ post_makeinstall_target() {
     cp $PKG_DIR/scripts/cputemp $INSTALL/usr/bin
       ln -sf cputemp $INSTALL/usr/bin/gputemp
     cp $PKG_DIR/scripts/setwakeup.sh $INSTALL/usr/bin
+# GUI switch service
+    cp $PKG_DIR/scripts/gui-switch.start $INSTALL/usr/bin
 
   mkdir -p $INSTALL/usr/share/kodi/addons
     cp -R $PKG_DIR/config/os.alexelec $INSTALL/usr/share/kodi/addons
