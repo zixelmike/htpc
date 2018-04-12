@@ -9,7 +9,11 @@ ConditionPathExists=/storage/.cache/alexelec/network_wait
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/wait-net.sh
+EnvironmentFile=/storage/.cache/alexelec/network_wait
+ExecStartPre=/bin/sh -c 'echo "waiting on Network to come online ... (max. $WAIT_NETWORK_TIME sec.)"'
+ExecStart=/usr/sbin/connmand-wait-online --timeout=${WAIT_NETWORK_TIME}
+ExecStartPost=/bin/sh -c 'clear; lsb_release'
+StandardOutput=tty
 RemainAfterExit=yes
 
 [Install]
