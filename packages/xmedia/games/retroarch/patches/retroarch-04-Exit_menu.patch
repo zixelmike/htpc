@@ -69,102 +69,6 @@ diff -Naurp retroarch-ab00d58/command.c retroarch-ab00d58-patch/command.c
  #endif
           break;
        case CMD_EVENT_MENU_SAVE_CURRENT_CONFIG:
-diff -Naurp retroarch-ab00d58/intl/msg_hash_de.h retroarch-ab00d58-patch/intl/msg_hash_de.h
---- retroarch-ab00d58/intl/msg_hash_de.h	2018-04-12 10:23:35.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_de.h	2018-04-12 11:13:55.000000000 +0300
-@@ -1172,7 +1172,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Privatsphäre")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "RetroArch beenden")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Analog unterstützt")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_es.h retroarch-ab00d58-patch/intl/msg_hash_es.h
---- retroarch-ab00d58/intl/msg_hash_es.h	2018-04-12 10:25:13.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_es.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1951,7 +1951,7 @@ MSG_HASH(
- 	)
- MSG_HASH(
- 	MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--	"Cerrar RetroArch"
-+	"Exit to Kodi"
- 	)
- MSG_HASH(
- 	MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_fr.h retroarch-ab00d58-patch/intl/msg_hash_fr.h
---- retroarch-ab00d58/intl/msg_hash_fr.h	2018-04-12 10:25:13.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_fr.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1160,7 +1160,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Confidentialité")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Quitter RetroArch")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Support de l'analogique")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_it.h retroarch-ab00d58-patch/intl/msg_hash_it.h
---- retroarch-ab00d58/intl/msg_hash_it.h	2018-04-12 10:24:12.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_it.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1172,7 +1172,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Privacy")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Esci da RetroArch")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Analogici supportati")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_pl.h retroarch-ab00d58-patch/intl/msg_hash_pl.h
---- retroarch-ab00d58/intl/msg_hash_pl.h	2018-04-12 10:22:53.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_pl.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1250,7 +1250,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Prywatność")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Zamknij RetroArch")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Obsługiwany analog")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_pt_pt.h retroarch-ab00d58-patch/intl/msg_hash_pt_pt.h
---- retroarch-ab00d58/intl/msg_hash_pt_pt.h	2018-04-02 02:57:27.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_pt_pt.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1140,7 +1140,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Privacidade")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Sair do RetroArch")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Analógico suportado")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_ru.h retroarch-ab00d58-patch/intl/msg_hash_ru.h
---- retroarch-ab00d58/intl/msg_hash_ru.h	2018-04-12 10:21:59.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_ru.h	2018-04-12 11:16:17.000000000 +0300
-@@ -1169,7 +1169,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Конфиденциальность")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Выход из RetroArch")
-+      "Выход -> Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Поддерживается аналоговый сигнал")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
-diff -Naurp retroarch-ab00d58/intl/msg_hash_us.h retroarch-ab00d58-patch/intl/msg_hash_us.h
---- retroarch-ab00d58/intl/msg_hash_us.h	2018-04-12 10:21:06.000000000 +0300
-+++ retroarch-ab00d58-patch/intl/msg_hash_us.h	2018-04-12 11:10:32.000000000 +0300
-@@ -1250,7 +1250,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_PRESENT,
- MSG_HASH(MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
-       "Privacy")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_QUIT_RETROARCH,
--      "Quit RetroArch")
-+      "Exit to Kodi")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_ANALOG,
-       "Analog supported")
- MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_BBFC_RATING,
 diff -Naurp retroarch-ab00d58/menu/menu_setting.c retroarch-ab00d58-patch/menu/menu_setting.c
 --- retroarch-ab00d58/menu/menu_setting.c	2018-04-02 02:57:27.000000000 +0300
 +++ retroarch-ab00d58-patch/menu/menu_setting.c	2018-04-12 11:07:40.000000000 +0300
@@ -205,3 +109,75 @@ diff -Naurp retroarch-ab00d58/menu/menu_setting.c retroarch-ab00d58-patch/menu/m
  
           CONFIG_ACTION(
                 list, list_info,
+diff -Naurp retroarch-ab00d58/intl/msg_hash_ru.h retroarch-ab00d58-patch/intl/msg_hash_ru.h
+--- retroarch-ab00d58/intl/msg_hash_ru.h	2018-04-12 12:10:02.000000000 +0300
++++ retroarch-ab00d58-patch/intl/msg_hash_ru.h	2018-04-12 12:16:26.000000000 +0300
+@@ -1227,7 +1227,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RDB_ENTRY_TGDB_RATING,
+       "Рейтинг TGDB")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_REBOOT,
+-      "Перезагрузить")
++      "Перезагрузить систему")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RECORDING_CONFIG_DIRECTORY,
+       "Конфигурация записи")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_RECORDING_OUTPUT_DIRECTORY,
+@@ -1351,7 +1351,7 @@ MSG_HASH(MENU_ENUM_LABEL_VALUE_SHOW_ADVA
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SHOW_HIDDEN_FILES,
+       "Показать скрытые файлы и папки")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SHUTDOWN,
+-      "Неисправность")
++      "Выключить систему")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SLOWMOTION_RATIO,
+       "Коэффициент замедленного движения ")
+ MSG_HASH(MENU_ENUM_LABEL_VALUE_SORT_SAVEFILES_ENABLE,
+@@ -2524,7 +2524,7 @@ MSG_HASH(MENU_ENUM_SUBLABEL_NETWORK_INFO
+ MSG_HASH(MENU_ENUM_SUBLABEL_SYSTEM_INFORMATION,
+       "Показать информацию, относящуюся к устройству.")
+ MSG_HASH(MENU_ENUM_SUBLABEL_QUIT_RETROARCH,
+-      "Закрыть программу.")
++      "Закрыть программу и запустить Kodi.")
+ MSG_HASH(MENU_ENUM_SUBLABEL_VIDEO_WINDOW_WIDTH,
+       "Изменить размер ширины для окна дисплея. Если вы поменяете параметр на 0, то программа будет пытаться масштабировать окно как можно больше.")
+ MSG_HASH(MENU_ENUM_SUBLABEL_VIDEO_WINDOW_HEIGHT,
+diff -Naurp retroarch-ab00d58/retroarch.c retroarch-ab00d58-patch/retroarch.c
+--- retroarch-ab00d58/retroarch.c	2018-04-02 02:57:27.000000000 +0300
++++ retroarch-ab00d58-patch/retroarch.c	2018-04-12 12:36:57.000000000 +0300
+@@ -171,7 +171,8 @@ enum  runloop_state
+    RUNLOOP_STATE_SLEEP,
+    RUNLOOP_STATE_MENU_ITERATE,
+    RUNLOOP_STATE_END,
+-   RUNLOOP_STATE_QUIT
++   RUNLOOP_STATE_QUIT,
++   RUNLOOP_STATE_RESTART
+ };
+ 
+ typedef struct runloop_ctx_msg_info
+@@ -2579,7 +2580,7 @@ static enum runloop_state runloop_check_
+             {
+                old_quit_key                 = quit_key;
+                retroarch_main_quit();
+-               return RUNLOOP_STATE_QUIT;
++               return RUNLOOP_STATE_RESTART;
+             }
+ 
+             /* Loads dummy core instead of exiting RetroArch completely.
+@@ -2591,7 +2592,7 @@ static enum runloop_state runloop_check_
+          {
+             old_quit_key                 = quit_key;
+             retroarch_main_quit();
+-            return RUNLOOP_STATE_QUIT;
++            return RUNLOOP_STATE_RESTART;
+          }
+       }
+    }
+@@ -3209,6 +3210,10 @@ int runloop_iterate(unsigned *sleep_ms)
+          frame_limit_last_time = 0.0;
+          command_event(CMD_EVENT_QUIT, NULL);
+          return -1;
++      case RUNLOOP_STATE_RESTART:
++         frame_limit_last_time = 0.0;
++         command_event(CMD_EVENT_RESTART_RETROARCH, NULL);
++         return -1;
+       case RUNLOOP_STATE_POLLED_AND_SLEEP:
+          runloop_netplay_pause();
+          *sleep_ms = 10;
