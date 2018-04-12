@@ -1,0 +1,33 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+. /etc/profile
+
+LOCK_DIR="/var/lock"
+SERVICE_DIR="/storage/.cache/services"
+KODI_SETTINGS="/storage/.kodi/userdata/advancedsettings.xml"
+
+# set exit button
+if [ -f "$KODI_SETTINGS" ] ; then
+  if [ "$GPUTYPE" == "INTEL" ]; then
+      sed -i -e "s|<showexitbutton>.*$|<showexitbutton>false</showexitbutton>|" $KODI_SETTINGS
+  else
+      sed -i -e "s|<showexitbutton>.*$|<showexitbutton>true</showexitbutton>|" $KODI_SETTINGS
+  fi
+fi
+
+if [ -f "$SERVICE_DIR/shell.conf" ]; then
+  . $SERVICE_DIR/shell.conf
+  if [ "$SHELL" == "KODI" ]; then
+      touch $LOCK_DIR/start.kodi
+  else
+      touch $LOCK_DIR/start.vdr
+  fi
+else
+  touch $LOCK_DIR/start.kodi
+fi
+
+exit 0
