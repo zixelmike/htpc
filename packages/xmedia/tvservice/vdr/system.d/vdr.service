@@ -8,7 +8,7 @@ ConditionPathExists=/var/lock/start.vdr
 [Service]
 EnvironmentFile=-/run/alexelec/vdr.conf
 Environment=DISPLAY=:0.0
-Environment=/usr/bin:/usr/sbin:/storage/.config/vdr/plugins/xmltv2vdr/bin
+Environment=PATH=/usr/bin:/usr/sbin:/storage/.config/vdr/plugins/xmltv2vdr/bin
 ExecStartPre=-/usr/bin/vdr-config
 ExecStart=/bin/sh -c "eval LANG=$SYS_LOCALE exec vdr $VDR_ARGS"
 ExecStop=/bin/kill -TERM $MAINPID
