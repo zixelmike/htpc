@@ -1,6 +1,6 @@
 diff -Naurp kodi-7e52c1d/addons/resource.language.en_gb/resources/strings.po kodi-7e52c1d-patch/addons/resource.language.en_gb/resources/strings.po
---- kodi-7e52c1d/addons/resource.language.en_gb/resources/strings.po	2018-04-12 16:30:31.000000000 +0300
-+++ kodi-7e52c1d-patch/addons/resource.language.en_gb/resources/strings.po	2018-04-12 16:39:16.000000000 +0300
+--- kodi-7e52c1d/addons/resource.language.en_gb/resources/strings.po	2018-04-15 17:13:09.000000000 +0300
++++ kodi-7e52c1d-patch/addons/resource.language.en_gb/resources/strings.po	2018-04-15 17:11:50.000000000 +0300
 @@ -5596,7 +5596,7 @@ msgstr ""
  #: system/settings/settings.xml
  #: addons/skin.estuary/1080i/DialogButtonMenu.xml
@@ -20,8 +20,8 @@ diff -Naurp kodi-7e52c1d/addons/resource.language.en_gb/resources/strings.po kod
  
  #: addons/skin.estuary/1080i/DialogButtonMenu.xml
 diff -Naurp kodi-7e52c1d/xbmc/Application.cpp kodi-7e52c1d-patch/xbmc/Application.cpp
---- kodi-7e52c1d/xbmc/Application.cpp	2018-04-12 16:30:31.000000000 +0300
-+++ kodi-7e52c1d-patch/xbmc/Application.cpp	2018-04-12 16:55:10.000000000 +0300
+--- kodi-7e52c1d/xbmc/Application.cpp	2018-04-15 17:13:09.000000000 +0300
++++ kodi-7e52c1d-patch/xbmc/Application.cpp	2018-04-15 17:15:02.000000000 +0300
 @@ -223,6 +223,9 @@
  #include "pictures/GUIWindowSlideShow.h"
  #include "windows/GUIWindowLoginScreen.h"
@@ -52,7 +52,7 @@ diff -Naurp kodi-7e52c1d/xbmc/Application.cpp kodi-7e52c1d-patch/xbmc/Applicatio
      break;
  
    case TMSG_SUSPEND:
-@@ -3009,6 +3014,24 @@ void CApplication::Stop(int exitCode)
+@@ -3009,6 +3014,22 @@ void CApplication::Stop(int exitCode)
  
    cleanup_emu_environ();
  
@@ -62,14 +62,12 @@ diff -Naurp kodi-7e52c1d/xbmc/Application.cpp kodi-7e52c1d-patch/xbmc/Applicatio
 +  case EXITCODE_GAMES:
 +    remove("/var/lock/start.kodi");
 +    creat("/var/lock/start.retro", S_IRUSR|S_IROTH);
-+    system("systemctl stop kodi.service");
 +    system("systemctl start retroarch.service");
 +    break;
 +  
 +  case EXITCODE_TV:
 +    remove("/var/lock/start.kodi");
 +    creat("/var/lock/start.vdr", S_IRUSR|S_IROTH);
-+    system("systemctl stop kodi.service");
 +    system("systemctl start vdr.service");
 +    break;
 +  }
@@ -79,7 +77,7 @@ diff -Naurp kodi-7e52c1d/xbmc/Application.cpp kodi-7e52c1d-patch/xbmc/Applicatio
  
 diff -Naurp kodi-7e52c1d/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp kodi-7e52c1d-patch/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp
 --- kodi-7e52c1d/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp	2018-02-12 20:41:29.000000000 +0200
-+++ kodi-7e52c1d-patch/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp	2018-04-12 16:57:22.000000000 +0300
++++ kodi-7e52c1d-patch/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp	2018-04-15 17:11:50.000000000 +0300
 @@ -50,10 +50,10 @@ CLogindUPowerSyscall::CLogindUPowerSysca
    if (!m_hasUPower)
      CLog::Log(LOGINFO, "LogindUPowerSyscall - UPower not found, battery information will not be available");
@@ -97,7 +95,7 @@ diff -Naurp kodi-7e52c1d/xbmc/powermanagement/linux/LogindUPowerSyscall.cpp kodi
  
 diff -Naurp kodi-7e52c1d/xbmc/powermanagement/PowerManager.cpp kodi-7e52c1d-patch/xbmc/powermanagement/PowerManager.cpp
 --- kodi-7e52c1d/xbmc/powermanagement/PowerManager.cpp	2018-02-12 20:41:29.000000000 +0200
-+++ kodi-7e52c1d-patch/xbmc/powermanagement/PowerManager.cpp	2018-04-12 17:00:26.000000000 +0300
++++ kodi-7e52c1d-patch/xbmc/powermanagement/PowerManager.cpp	2018-04-15 17:11:50.000000000 +0300
 @@ -312,17 +312,6 @@ void CPowerManager::OnLowBattery()
  
  void CPowerManager::SettingOptionsShutdownStatesFiller(const CSetting *setting, std::vector< std::pair<std::string, int> > &list, int &current, void *data)
@@ -119,8 +117,8 @@ diff -Naurp kodi-7e52c1d/xbmc/powermanagement/PowerManager.cpp kodi-7e52c1d-patc
 +  list.push_back(make_pair(g_localizeStrings.Get(13011), POWERSTATE_SUSPEND));
  }
 diff -Naurp kodi-7e52c1d/xbmc/XBApplicationEx.h kodi-7e52c1d-patch/xbmc/XBApplicationEx.h
---- kodi-7e52c1d/xbmc/XBApplicationEx.h	2018-04-12 16:30:31.000000000 +0300
-+++ kodi-7e52c1d-patch/xbmc/XBApplicationEx.h	2018-04-12 16:43:45.000000000 +0300
+--- kodi-7e52c1d/xbmc/XBApplicationEx.h	2018-04-15 17:13:09.000000000 +0300
++++ kodi-7e52c1d-patch/xbmc/XBApplicationEx.h	2018-04-15 17:11:50.000000000 +0300
 @@ -31,6 +31,8 @@ enum {
    EXITCODE_POWERDOWN = 64,
    EXITCODE_RESTARTAPP= 65,
