@@ -9,12 +9,14 @@ LOCK_DIR="/var/lock"
 
 case $1 in
   pre)
-    if [ -f "$LOCK_DIR/start.vdr" ] ; then
+    if [ -f "$LOCK_DIR/sleep.vdr" ] ; then
       systemctl stop "$SERVICE"
     fi
     ;;
   post)
-    if [ -f "$LOCK_DIR/start.vdr" ] ; then
+    if [ -f "$LOCK_DIR/sleep.vdr" ] ; then
+      rm -f $LOCK_DIR/sleep.vdr
+      touch $LOCK_DIR/start.vdr
       systemctl start "$SERVICE"
     fi
     ;;

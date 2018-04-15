@@ -24,7 +24,7 @@ diff -Naurp vdr-2.3.8/keys.h vdr-2.3.8-patch/keys.h
               kChanPrev,
 diff -Naurp vdr-2.3.8/menu.c vdr-2.3.8-patch/menu.c
 --- vdr-2.3.8/menu.c	2018-04-15 12:57:08.000000000 +0300
-+++ vdr-2.3.8-patch/menu.c	2018-04-15 14:35:55.000000000 +0300
++++ vdr-2.3.8-patch/menu.c	2018-04-15 15:54:00.000000000 +0300
 @@ -14,6 +14,7 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -33,7 +33,7 @@ diff -Naurp vdr-2.3.8/menu.c vdr-2.3.8-patch/menu.c
  #include "channels.h"
  #include "config.h"
  #include "cutter.h"
-@@ -2157,28 +2158,56 @@ eOSState cMenuCommands::Execute(void)
+@@ -2157,28 +2158,60 @@ eOSState cMenuCommands::Execute(void)
                cmdbuf = cString::sprintf("%s %s", *command, *parameters);
             const char *cmd = *cmdbuf ? *cmdbuf : *command;
             dsyslog("executing command '%s'", cmd);
@@ -65,18 +65,22 @@ diff -Naurp vdr-2.3.8/menu.c vdr-2.3.8-patch/menu.c
 +           }
 +           else if (strcmp(cmd, "sleep") == 0)
 +           {
++               remove("/var/lock/start.vdr");
++               creat("/var/lock/sleep.vdr", S_IRUSR|S_IROTH);
 +               esyslog("VDR frontend command: Sleep");
 +               ShutdownHandler.Exit(97);
 +           }
 +           else if (strcmp(cmd, "sysreboot") == 0)
 +           {
 +               remove("/var/lock/start.vdr");
++               creat("/var/lock/reboot.vdr", S_IRUSR|S_IROTH);
 +               esyslog("VDR frontend command: Reboot");
 +               ShutdownHandler.Exit(98);
 +           }
 +           else if (strcmp(cmd, "syspower") == 0)
 +           {
 +               remove("/var/lock/start.vdr");
++               creat("/var/lock/power.vdr", S_IRUSR|S_IROTH);
 +               esyslog("VDR frontend command: Powerof");
 +               ShutdownHandler.Exit(99);
 +           }
@@ -204,7 +208,7 @@ diff -Naurp vdr-2.3.8/thread.c vdr-2.3.8-patch/thread.c
    if (pid > 0) { // parent process
 diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
 --- vdr-2.3.8/vdr.c	2018-04-15 12:57:08.000000000 +0300
-+++ vdr-2.3.8-patch/vdr.c	2018-04-15 14:06:03.000000000 +0300
++++ vdr-2.3.8-patch/vdr.c	2018-04-15 16:08:08.000000000 +0300
 @@ -39,6 +39,7 @@
  #endif
  #include <termios.h>
@@ -235,7 +239,7 @@ diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
                    // Not pressed power - set VDR to be non-interactive and power down later:
                    ShutdownHandler.SetUserInactive();
                    break;
-@@ -1374,6 +1375,64 @@ int main(int argc, char *argv[])
+@@ -1374,6 +1375,66 @@ int main(int argc, char *argv[])
                 // Do not attempt to automatically shut down for a while:
                 ShutdownHandler.SetRetry(SHUTDOWNRETRY);
                 break;
@@ -290,6 +294,8 @@ diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
 +                  // If final question was canceled, continue to be active:
 +                  break;
 +               // Ok, now call the sleep script:
++               remove("/var/lock/start.vdr");
++               creat("/var/lock/sleep.vdr", S_IRUSR|S_IROTH);
 +               esyslog("VDR frontend key command: Sleep");
 +               EXIT(97);
 +               // Set VDR to be non-interactive and sleep again later:
@@ -300,7 +306,7 @@ diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
            default: break;
            }
          Interact = Menu ? Menu : cControl::Control(); // might have been closed in the mean time
-@@ -1607,5 +1666,28 @@ Exit:
+@@ -1607,5 +1668,26 @@ Exit:
    else
       sd_notify(0, "STOPPING=1\nSTATUS=Exiting");
  #endif
@@ -309,21 +315,19 @@ diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
 +  switch(ShutdownHandler.GetExitCode()) {
 +     case 0: // Exit to Kodi
 +         esyslog("VDR frontend normal Exit!!!");
-+         SystemExec("systemctl start kodi.service", false);
 +         SystemExec("systemctl stop vdr.service", false);
 +         break;
 +     case 97: // Sleep
 +         esyslog("VDR frontend normal Suspend!!!");
 +         SystemExec("systemctl stop vdr.service", false);
-+         SystemExec("systemctl suspend", false);
 +         break;
 +     case 98: // Reboot
 +         esyslog("VDR frontend normal Reboot!!!");
-+         SystemExec("systemctl reboot", false);
++         SystemExec("systemctl stop vdr.service", false);
 +         break;
 +     case 99: // Shutdown
 +         esyslog("VDR frontend normal PowerOff!!!");
-+         SystemExec("systemctl poweroff", false);
++         SystemExec("systemctl stop vdr.service", false);
 +         break;
 +    }
 +
