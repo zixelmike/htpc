@@ -11,7 +11,7 @@ Environment=DISPLAY=:0.0
 ExecStartPre=-/usr/bin/vdr-config
 ExecStart=/bin/sh -c "eval LANG=$SYS_LOCALE exec vdr $VDR_ARGS"
 ExecStop=/bin/kill -TERM $MAINPID
-TimeoutStopSec=5
+TimeoutStopSec=10
 Restart=on-failure
 SuccessExitStatus=97 98 99
 RestartSec=2
