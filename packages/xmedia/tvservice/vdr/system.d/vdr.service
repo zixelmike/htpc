@@ -12,7 +12,7 @@ ExecStartPre=-/usr/bin/vdr-config
 ExecStart=/bin/sh -c "eval LANG=$SYS_LOCALE exec vdr $VDR_ARGS"
 ExecStop=/bin/kill -TERM $MAINPID
 ExecStopPost=/usr/bin/vdr-stop
-TimeoutStopSec=10
+TimeoutStopSec=5
 Restart=on-failure
 SuccessExitStatus=97 98 99
 RestartSec=2

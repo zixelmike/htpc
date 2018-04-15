@@ -62,15 +62,15 @@ diff -Naurp kodi-7e52c1d/xbmc/Application.cpp kodi-7e52c1d-patch/xbmc/Applicatio
 +  case EXITCODE_GAMES:
 +    remove("/var/lock/start.kodi");
 +    creat("/var/lock/start.retro", S_IRUSR|S_IROTH);
-+    system("systemctl start retroarch.service");
 +    system("systemctl stop kodi.service");
++    system("systemctl start retroarch.service");
 +    break;
 +  
 +  case EXITCODE_TV:
 +    remove("/var/lock/start.kodi");
 +    creat("/var/lock/start.vdr", S_IRUSR|S_IROTH);
-+    system("systemctl start vdr.service");
 +    system("systemctl stop kodi.service");
++    system("systemctl start vdr.service");
 +    break;
 +  }
 +
