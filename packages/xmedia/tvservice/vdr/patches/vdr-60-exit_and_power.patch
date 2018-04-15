@@ -1,0 +1,331 @@
+diff -Naurp vdr-2.3.8/keys.c vdr-2.3.8-patch/keys.c
+--- vdr-2.3.8/keys.c	2012-12-04 14:52:52.000000000 +0200
++++ vdr-2.3.8-patch/keys.c	2018-04-15 12:59:14.000000000 +0300
+@@ -43,6 +43,8 @@ static tKey keyTable[] = { // "Up" and "
+                     { kNext,          trNOOP("Key$Next")        },
+                     { kPrev,          trNOOP("Key$Prev")        },
+                     { kPower,         trNOOP("Key$Power")       },
++                    { kExit,          trNOOP("Key$Exit")        },
++                    { kSleep,         trNOOP("Key$Sleep")       },
+                     { kChanUp,        trNOOP("Key$Channel+")    },
+                     { kChanDn,        trNOOP("Key$Channel-")    },
+                     { kChanPrev,      trNOOP("Key$PrevChannel") },
+diff -Naurp vdr-2.3.8/keys.h vdr-2.3.8-patch/keys.h
+--- vdr-2.3.8/keys.h	2015-01-27 12:45:18.000000000 +0200
++++ vdr-2.3.8-patch/keys.h	2018-04-15 12:59:46.000000000 +0300
+@@ -37,6 +37,8 @@ enum eKeys { // "Up" and "Down" must be
+              kNext,
+              kPrev,
+              kPower,
++             kExit,
++             kSleep,
+              kChanUp,
+              kChanDn,
+              kChanPrev,
+diff -Naurp vdr-2.3.8/menu.c vdr-2.3.8-patch/menu.c
+--- vdr-2.3.8/menu.c	2018-04-15 12:57:08.000000000 +0300
++++ vdr-2.3.8-patch/menu.c	2018-04-15 14:35:55.000000000 +0300
+@@ -14,6 +14,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <fcntl.h>
+ #include "channels.h"
+ #include "config.h"
+ #include "cutter.h"
+@@ -2157,28 +2158,56 @@ eOSState cMenuCommands::Execute(void)
+               cmdbuf = cString::sprintf("%s %s", *command, *parameters);
+            const char *cmd = *cmdbuf ? *cmdbuf : *command;
+            dsyslog("executing command '%s'", cmd);
+-           cPipe p;
+-           if (p.Open(cmd, "r")) {
+-              int l = 0;
+-              int c;
+-              while ((c = fgetc(p)) != EOF) {
+-                    if (l % 20 == 0) {
+-                       if (char *NewBuffer = (char *)realloc(result, l + 21))
+-                          result = NewBuffer;
+-                       else {
+-                          esyslog("ERROR: out of memory");
+-                          break;
+-                          }
+-                       }
+-                    result[l++] = char(c);
+-                    }
+-              if (result)
+-                 result[l] = 0;
+-              p.Close();
+-              }
++           if (strcmp(cmd, "exit") == 0)
++           {
++               remove("/var/lock/start.vdr");
++               creat("/var/lock/start.kodi", S_IRUSR|S_IROTH);
++               esyslog("VDR frontend command: Exit");
++               ShutdownHandler.Exit(0);
++           }
++           else if (strcmp(cmd, "sleep") == 0)
++           {
++               esyslog("VDR frontend command: Sleep");
++               ShutdownHandler.Exit(97);
++           }
++           else if (strcmp(cmd, "sysreboot") == 0)
++           {
++               remove("/var/lock/start.vdr");
++               esyslog("VDR frontend command: Reboot");
++               ShutdownHandler.Exit(98);
++           }
++           else if (strcmp(cmd, "syspower") == 0)
++           {
++               remove("/var/lock/start.vdr");
++               esyslog("VDR frontend command: Powerof");
++               ShutdownHandler.Exit(99);
++           }
+            else
+-              esyslog("ERROR: can't open pipe for command '%s'", cmd);
+-           Skins.Message(mtStatus, NULL);
++           {
++               cPipe p;
++               if (p.Open(cmd, "r")) {
++                  int l = 0;
++                  int c;
++                  while ((c = fgetc(p)) != EOF) {
++                      if (l % 20 == 0) {
++                         if (char *NewBuffer = (char *)realloc(result, l + 21))
++                            result = NewBuffer;
++                         else {
++                            esyslog("ERROR: out of memory");
++                            break;
++                            }
++                         }
++                      result[l++] = char(c);
++                      }
++                  if (result)
++                     result[l] = 0;
++                  p.Close();
++                  }
++               else
++                  esyslog("ERROR: can't open pipe for command '%s'", cmd);
++               Skins.Message(mtStatus, NULL);
++           }
++
+            if (result)
+               return AddSubMenu(new cMenuText(title, result, fontFix));
+            return osEnd;
+diff -Naurp vdr-2.3.8/po/ru_RU.po vdr-2.3.8-patch/po/ru_RU.po
+--- vdr-2.3.8/po/ru_RU.po	2017-06-30 12:50:44.000000000 +0300
++++ vdr-2.3.8-patch/po/ru_RU.po	2018-04-15 13:38:36.000000000 +0300
+@@ -1591,12 +1591,24 @@ msgstr "Запустить запись?
+ msgid "Recording started"
+ msgstr "Запись начата"
+ 
+-msgid "VDR will shut down later - press Power to force"
+-msgstr "VDR выключится позже - нажмите Питание для ускорения"
++msgid "MediaCenter will shut down later - press Power to force"
++msgstr "Медиацентр выключится позже - нажмите Power для ускорения"
++
++msgid "VDR will close later - press Exit to force"
++msgstr "VDR будет закрыт позже - нажмите Exit для ускорения"
++
++msgid "MediaCenter will sleep later - press Sleep to force"
++msgstr "Медиацентр будет переведен в сон позже - нажмите Sleep для ускорения"
+ 
+ msgid "Press any key to cancel shutdown"
+ msgstr "Нажмите любую кнопку чтобы отменить выключение"
+ 
++msgid "Press any key to cancel exit"
++msgstr "Нажмите любую кнопку чтобы отменить переключение в KODI."
++
++msgid "Press any key to cancel sleep"
++msgstr "Нажмите любую кнопку чтобы отменить режим сна."
++
+ msgid "Switching primary DVB..."
+ msgstr "Смена основного DVB-устройства..."
+ 
+diff -Naurp vdr-2.3.8/shutdown.c vdr-2.3.8-patch/shutdown.c
+--- vdr-2.3.8/shutdown.c	2015-07-18 14:29:26.000000000 +0300
++++ vdr-2.3.8-patch/shutdown.c	2018-04-15 13:41:57.000000000 +0300
+@@ -130,9 +130,10 @@ void cShutdownHandler::SetShutdownComman
+ void cShutdownHandler::CallShutdownCommand(time_t WakeupTime, int Channel, const char *File, bool UserShutdown)
+ {
+   time_t Delta = WakeupTime ? WakeupTime - time(NULL) : 0;
+-  cString cmd = cString::sprintf("%s %ld %ld %d \"%s\" %d", shutdownCommand, WakeupTime, Delta, Channel, *strescape(File, "\\\"$"), UserShutdown);
++  cString cmd = cString::sprintf("PowerOFF: %ld %ld %d \"%s\" %d", WakeupTime, Delta, Channel, *strescape(File, "\\\"$"), UserShutdown);
+   isyslog("executing '%s'", *cmd);
+-  int Status = SystemExec(cmd, true);
++  remove("/var/lock/start.vdr");
++  int Status = SystemExec("systemctl poweroff", true);
+   if (!WIFEXITED(Status) || WEXITSTATUS(Status))
+      esyslog("SystemExec() failed with status %d", Status);
+   else {
+@@ -162,11 +163,6 @@ bool cShutdownHandler::ConfirmShutdown(b
+   if (!Interactive && !cRemote::Enabled())
+      return false;
+ 
+-  if (!shutdownCommand) {
+-     if (Interactive)
+-        Skins.Message(mtError, tr("Can't shutdown - option '-s' not given!"));
+-     return false;
+-     }
+   if (RecordingsHandler.Active()) {
+      if (!Interactive || !Interface->Confirm(tr("Editing - shut down anyway?")))
+         return false;
+diff -Naurp vdr-2.3.8/thread.c vdr-2.3.8-patch/thread.c
+--- vdr-2.3.8/thread.c	2018-04-15 12:57:08.000000000 +0300
++++ vdr-2.3.8-patch/thread.c	2018-04-15 13:46:23.000000000 +0300
+@@ -907,9 +907,13 @@ bool cPipe::Open(const char *Command, co
+      }
+   if ((pid = fork()) < 0) { // fork failed
+      LOG_ERROR;
+-     close(fd[0]);
+-     close(fd[1]);
+-     return false;
++     cCondWait::SleepMs(100);
++     if ((pid = fork()) < 0) {
++         LOG_ERROR;
++         close(fd[0]);
++         close(fd[1]);
++         return false;
++         }
+      }
+ 
+   const char *mode = "w";
+@@ -998,7 +1002,11 @@ int SystemExec(const char *Command, bool
+ 
+   if ((pid = fork()) < 0) { // fork failed
+      LOG_ERROR;
+-     return -1;
++     cCondWait::SleepMs(100);
++     if ((pid = fork()) < 0) {
++        LOG_ERROR;
++        return -1;
++        }
+      }
+ 
+   if (pid > 0) { // parent process
+diff -Naurp vdr-2.3.8/vdr.c vdr-2.3.8-patch/vdr.c
+--- vdr-2.3.8/vdr.c	2018-04-15 12:57:08.000000000 +0300
++++ vdr-2.3.8-patch/vdr.c	2018-04-15 14:06:03.000000000 +0300
+@@ -39,6 +39,7 @@
+ #endif
+ #include <termios.h>
+ #include <unistd.h>
++#include <fcntl.h>
+ #include "args.h"
+ #include "audio.h"
+ #include "channels.h"
+@@ -76,9 +77,9 @@
+ #define ACTIVITYTIMEOUT       60 // seconds before starting housekeeping
+ #define SHUTDOWNWAIT         300 // seconds to wait in user prompt before automatic shutdown
+ #define SHUTDOWNRETRY        360 // seconds before trying again to shut down
+-#define SHUTDOWNFORCEPROMPT    5 // seconds to wait in user prompt to allow forcing shutdown
+-#define SHUTDOWNCANCELPROMPT   5 // seconds to wait in user prompt to allow canceling shutdown
+-#define RESTARTCANCELPROMPT    5 // seconds to wait in user prompt before restarting on SIGHUP
++#define SHUTDOWNFORCEPROMPT    3 // seconds to wait in user prompt to allow forcing shutdown
++#define SHUTDOWNCANCELPROMPT   3 // seconds to wait in user prompt to allow canceling shutdown
++#define RESTARTCANCELPROMPT    3 // seconds to wait in user prompt before restarting on SIGHUP
+ #define MANUALSTART          600 // seconds the next timer must be in the future to assume manual start
+ #define CHANNELSAVEDELTA     120 // seconds before saving channels.conf after automatic modifications
+ #define DEVICEREADYTIMEOUT    30 // seconds to wait until all devices are ready
+@@ -1352,7 +1353,7 @@ int main(int argc, char *argv[])
+                isyslog("Power button pressed");
+                DELETE_MENU;
+                // Check for activity, request power button again if active:
+-               if (!ShutdownHandler.ConfirmShutdown(false) && Skins.Message(mtWarning, tr("VDR will shut down later - press Power to force"), SHUTDOWNFORCEPROMPT) != kPower) {
++               if (!ShutdownHandler.ConfirmShutdown(false) && Skins.Message(mtWarning, tr("MediaCenter will shut down later - press Power to force"), SHUTDOWNFORCEPROMPT) != kPower) {
+                   // Not pressed power - set VDR to be non-interactive and power down later:
+                   ShutdownHandler.SetUserInactive();
+                   break;
+@@ -1374,6 +1375,64 @@ int main(int argc, char *argv[])
+                // Do not attempt to automatically shut down for a while:
+                ShutdownHandler.SetRetry(SHUTDOWNRETRY);
+                break;
++          // Exit to KODI:
++          case kExit:
++               isyslog("Exit button pressed");
++               DELETE_MENU;
++               // Check for activity, request exit button again if active:
++               if (!ShutdownHandler.ConfirmShutdown(false) && Skins.Message(mtWarning, tr("VDR will close later - press Exit to force"), SHUTDOWNFORCEPROMPT) != kExit) {
++                  // Not pressed exit - set VDR to be non-interactive and exit later:
++                  ShutdownHandler.SetUserInactive();
++                  break;
++                  }
++               // No activity or exit button pressed twice - ask for confirmation:
++               if (!ShutdownHandler.ConfirmShutdown(true)) {
++                  // Non-confirmed background activity - set VDR to be non-interactive and exit down later:
++                  ShutdownHandler.SetUserInactive();
++                  break;
++                  }
++               // Ask the final question:
++               if (!Interface->Confirm(tr("Press any key to cancel exit"), SHUTDOWNCANCELPROMPT, true))
++                  // If final question was canceled, continue to be active:
++                  break;
++               // Ok, now call the exit script:
++               remove("/var/lock/start.vdr");
++               creat("/var/lock/start.kodi", S_IRUSR|S_IROTH);
++               esyslog("VDR frontend key command: Exit");
++               EXIT(0);
++               // Set VDR to be non-interactive and exit down again later:
++               ShutdownHandler.SetUserInactive();
++               // Do not attempt to automatically exit for a while:
++               ShutdownHandler.SetRetry(SHUTDOWNRETRY);
++               break;
++          // Sleep:
++          case kSleep:
++               isyslog("Sleep button pressed");
++               DELETE_MENU;
++               // Check for activity, request exit button again if active:
++               if (!ShutdownHandler.ConfirmShutdown(false) && Skins.Message(mtWarning, tr("MediaCenter will sleep later - press Sleep to force"), SHUTDOWNFORCEPROMPT) != kSleep) {
++                  // Not pressed sleep - set VDR to be non-interactive and sleep later:
++                  ShutdownHandler.SetUserInactive();
++                  break;
++                  }
++               // No activity or sleep button pressed twice - ask for confirmation:
++               if (!ShutdownHandler.ConfirmShutdown(true)) {
++                  // Non-confirmed background activity - set VDR to be non-interactive and sleep down later:
++                  ShutdownHandler.SetUserInactive();
++                  break;
++                  }
++               // Ask sleep question:
++               if (!Interface->Confirm(tr("Press any key to cancel sleep"), SHUTDOWNCANCELPROMPT, true))
++                  // If final question was canceled, continue to be active:
++                  break;
++               // Ok, now call the sleep script:
++               esyslog("VDR frontend key command: Sleep");
++               EXIT(97);
++               // Set VDR to be non-interactive and sleep again later:
++               ShutdownHandler.SetUserInactive();
++               // Do not attempt to automatically sleep for a while:
++               ShutdownHandler.SetRetry(SHUTDOWNRETRY);
++               break;
+           default: break;
+           }
+         Interact = Menu ? Menu : cControl::Control(); // might have been closed in the mean time
+@@ -1607,5 +1666,28 @@ Exit:
+   else
+      sd_notify(0, "STOPPING=1\nSTATUS=Exiting");
+ #endif
++
++  // Success EXIT code
++  switch(ShutdownHandler.GetExitCode()) {
++     case 0: // Exit to Kodi
++         esyslog("VDR frontend normal Exit!!!");
++         SystemExec("systemctl start kodi.service", false);
++         SystemExec("systemctl stop vdr.service", false);
++         break;
++     case 97: // Sleep
++         esyslog("VDR frontend normal Suspend!!!");
++         SystemExec("systemctl stop vdr.service", false);
++         SystemExec("systemctl suspend", false);
++         break;
++     case 98: // Reboot
++         esyslog("VDR frontend normal Reboot!!!");
++         SystemExec("systemctl reboot", false);
++         break;
++     case 99: // Shutdown
++         esyslog("VDR frontend normal PowerOff!!!");
++         SystemExec("systemctl poweroff", false);
++         break;
++    }
++
+   return ShutdownHandler.GetExitCode();
+ }

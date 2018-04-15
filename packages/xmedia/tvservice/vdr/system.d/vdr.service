@@ -1,17 +1,19 @@
 [Unit]
-Description=VDR backend service
-After=network-online.target
-Before=kodi.service
-ConditionPathExists=/storage/.cache/services/vdr.conf
+Description=VDR Frontend service
+After=network-online.target graphical.target gui-switch.service oscam.service aceproxy.service
+Requires=graphical.target gui-switch.service
+Wants=network-online.target oscam.service aceproxy.service
+ConditionPathExists=/var/lock/start.vdr
 
 [Service]
 EnvironmentFile=-/run/alexelec/vdr.conf
+Environment=DISPLAY=:0.0
 ExecStartPre=-/usr/bin/vdr-config
 ExecStart=/bin/sh -c "eval LANG=$SYS_LOCALE exec vdr $VDR_ARGS"
 ExecStop=/bin/kill -TERM $MAINPID
-ExecStopPost=/bin/sh -c 'echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'
 TimeoutStopSec=5
-Restart=always
+Restart=on-failure
+SuccessExitStatus=97 98 99
 RestartSec=2
 StartLimitInterval=0
 

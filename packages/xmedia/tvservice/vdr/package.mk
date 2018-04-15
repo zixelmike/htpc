@@ -66,3 +66,7 @@ post_makeinstall_target() {
     cp send/svdrpsend $INSTALL/usr/bin
     $STRIP $INSTALL/usr/bin/svdrpsend
 }
+
+post_install() {
+  enable_service vdr.service
+}

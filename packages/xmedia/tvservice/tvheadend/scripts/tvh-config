@@ -23,7 +23,8 @@ else
   TVHEADEND_ARG="-B -C -u root -g video -c $TVH_HOME -S"
 fi
 
-if [ "$TVH_FEINIT" == "1" ] ; then
+# wait for DVB
+if [ "$DVB_FEINIT" == "1" ] ; then
   TIMEOUT=30
   for i in $(seq 1 $TIMEOUT) ; do
     [ -e /dev/dvb/adapter0/frontend0 ] && break

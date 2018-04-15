@@ -5,17 +5,16 @@
 ################################################################################
 
 SERVICE="vdr.service"
-SERVICE_DIR="/storage/.cache/services"
+LOCK_DIR="/var/lock"
 
 case $1 in
   pre)
-    if [ -f "$SERVICE_DIR/vdr.conf" ] ; then
+    if [ -f "$LOCK_DIR/start.vdr" ] ; then
       systemctl stop "$SERVICE"
-      rm -f /var/lock/dvb-fw.load
     fi
     ;;
   post)
-    if [ -f "$SERVICE_DIR/vdr.conf" ] ; then
+    if [ -f "$LOCK_DIR/start.vdr" ] ; then
       systemctl start "$SERVICE"
     fi
     ;;
