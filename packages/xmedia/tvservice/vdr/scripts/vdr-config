@@ -64,7 +64,8 @@ VDR_CONFIG_DIR="/storage/.config/vdr"
 
   if [ "$VDR_XMLTV" == "1" ]; then
       grep -q " /var/run/vdr " /proc/mounts || ( mkdir -p /var/run/vdr && mount -t tmpfs -o size=10% tmpfs /var/run/vdr )
-      ln -sf $VDR_CONFIG_DIR/plugins/xmltv2vdr/epgsources /var/lib/epgsources
+      [ -h /var/lib/epgsources ] || ln -sf $VDR_CONFIG_DIR/plugins/xmltv2vdr/epgsources /var/lib/epgsources
+      echo $PATH | grep -q '/storage/.config/vdr/plugins/xmltv2vdr/bin' || export PATH=$PATH:/storage/.config/vdr/plugins/xmltv2vdr/bin
       VDR_ARGS="$VDR_ARGS -P'xmltv2vdr --epgfile=/storage/.config/vdr/plugins/xmltv2vdr/epg.db --logfile=/var/log/xmltv2vdr.log'"
   fi
 
