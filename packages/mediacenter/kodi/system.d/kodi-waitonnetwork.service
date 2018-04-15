@@ -11,8 +11,7 @@ ConditionPathExists=/storage/.cache/alexelec/network_wait
 Type=oneshot
 EnvironmentFile=/storage/.cache/alexelec/network_wait
 ExecStartPre=/bin/sh -c 'echo "waiting on Network to come online ... (max. $WAIT_NETWORK_TIME sec.)"'
-ExecStart=/usr/sbin/connmand-wait-online --timeout=${WAIT_NETWORK_TIME}
-ExecStartPost=/bin/sh -c 'clear; lsb_release'
+ExecStart=/bin/sh -c "/usr/sbin/connmand-wait-online --timeout=${WAIT_NETWORK_TIME}; clear"
 StandardOutput=tty
 RemainAfterExit=yes
 
