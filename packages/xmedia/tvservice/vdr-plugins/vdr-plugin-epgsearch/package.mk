@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="vdr-plugin-epgsearch"
-PKG_VERSION="c7c02e2"
+PKG_VERSION="5887e0a"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://projects.vdr-developer.org/git/vdr-plugin-epgsearch.git"
