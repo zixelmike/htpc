@@ -23,6 +23,7 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mc scan-m3u scan-s2 wget ImageMagick"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET tvheadend oscam vdr"
 
 # vdr-plugins
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdr-plugin-channelscan"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdr-plugin-dvbapi"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdr-plugin-epgsearch"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdr-plugin-femon"
