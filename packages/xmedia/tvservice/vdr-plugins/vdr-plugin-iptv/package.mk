@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="vdr-plugin-iptv"
-PKG_VERSION="0fe1cb7"
+PKG_VERSION="5ae793f"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
