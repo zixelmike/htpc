@@ -3,28 +3,26 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
-PKG_NAME="vdr-plugin-vaapidevice"
-PKG_VERSION="9da06d6"
+PKG_NAME="vdr-plugin-tvguideng"
+PKG_VERSION="65248ba"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/pesintta/vdr-plugin-vaapidevice"
+PKG_SITE="https://github.com/vdr-projects/vdr-plugin-tvguideng"
 PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain vdr xcb-util-keysyms xcb-util-wm xcb-util-renderutil xcb-util-image ffmpeg"
+PKG_DEPENDS_TARGET="toolchain vdr vdr-plugin-skindesigner"
 PKG_SECTION="xmedia/tvservice"
-PKG_SHORTDESC="A VA-API output device plugin for VDR"
-PKG_LONGDESC="A VA-API output device plugin for VDR."
+PKG_SHORTDESC="TvGuideNG is a highly customizable 2D EPG viewer plugin for Skindesigner Skins"
+PKG_LONGDESC="TvGuideNG is a highly customizable 2D EPG viewer plugin for Skindesigner Skins."
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_LOCALE_INSTALL="yes"
 
 make_target() {
-  : not
+  : # none
 }
 
 makeinstall_target() {
   make LIBDIR=/usr/lib/vdr \
-       GIT_REV=$PKG_VERSION \
-       CONFIG=-DDEBUG \
        DESTDIR=$INSTALL \
        install
 }
