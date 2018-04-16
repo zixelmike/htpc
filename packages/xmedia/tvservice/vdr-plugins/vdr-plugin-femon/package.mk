@@ -3,17 +3,16 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
-PKG_NAME="vdr-plugin-iptv"
-PKG_VERSION="5ae793f"
+PKG_NAME="vdr-plugin-femon"
+PKG_VERSION="d366856"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
-PKG_SITE="https://github.com/rofafor/vdr-plugin-iptv"
+PKG_SITE="https://github.com/rofafor/vdr-plugin-femon"
 PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain vdr curl"
+PKG_DEPENDS_TARGET="toolchain vdr"
 PKG_SECTION="xmedia/tvservice"
-PKG_SHORTDESC="vdr-iptv: an IPTV plugin for the Video Disk Recorder (VDR)"
-PKG_LONGDESC="vdr-iptv is an IPTV plugin for the Video Disk Recorder (VDR)"
+PKG_SHORTDESC="VDR -- DVB Frontend Status Monitor plugin"
+PKG_LONGDESC="vdr-femon is a plugin for VDR, the Video Disk Recorder. This plugin displays some signal information parameters of the current tuned channel on OSD. You can zap through all your channels and the plugin should be monitoring always the right frontend. The transponder and stream information are also available in advanced display modes"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_LOCALE_INSTALL="yes"
@@ -27,10 +26,4 @@ makeinstall_target() {
        GITTAG=$PKG_VERSION \
        DESTDIR=$INSTALL \
        install
-}
-
-post_makeinstall_target() {
-  mkdir -p $INSTALL/usr/config
-    mv -f $INSTALL/storage/.config/vdr $INSTALL/usr/config
-  rm -rf $INSTALL/storage
 }
