@@ -17,7 +17,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 # tools
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mc scan-m3u scan-s2 wget ImageMagick"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mc scan-m3u scan-s2 wget"
 
 # tv-services
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET tvheadend oscam vdr"
