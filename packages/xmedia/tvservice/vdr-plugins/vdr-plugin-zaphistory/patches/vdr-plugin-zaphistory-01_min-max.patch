@@ -1,0 +1,21 @@
+diff -Naurp vdr-plugin-zaphistory-484b48a/epg_item.c vdr-plugin-zaphistory-484b48a-patch/epg_item.c
+--- vdr-plugin-zaphistory-484b48a/epg_item.c	2015-12-09 21:09:19.000000000 +0200
++++ vdr-plugin-zaphistory-484b48a-patch/epg_item.c	2018-04-17 16:51:19.000000000 +0300
+@@ -90,7 +90,7 @@ bool cMenuMyScheduleItem::Update(bool Fo
+                 std::string ProgressBar;
+                 ProgressBar += Icons::ProgressStart();
+                 int frac = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float)(event->Duration()) * 10.0 );
+-                frac = min(10,max(0, frac));
++                frac = std::min(10,std::max(0, frac));
+                 for(int i=0;i < 10;i++)
+                 {
+                     if(i < frac)
+@@ -103,7 +103,7 @@ bool cMenuMyScheduleItem::Update(bool Fo
+             } else if( ZapHistorySetup.ProgressView == 0 ) {
+                 char szProgress[9] = "";
+                 int frac = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float)(event->Duration()) * 8.0 );
+-                frac = min(8,max(0, frac));
++                frac = std::min(8,std::max(0, frac));
+ 
+                 for(int i = 0; i < frac; i++)
+                     szProgress[i] = (progress == 1 ? '|' : 127);
