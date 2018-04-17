@@ -33,25 +33,15 @@ VDR_CONFIG_DIR="/storage/.config/vdr"
       VDR_ARGS="$VDR_ARGS -P'softhddevice -v vdpau'"
   fi
 
+  VDR_ARGS="$VDR_ARGS -P epgsearch -P femon -P systeminfo -P sleeptimer"
+
   [ "$VDR_DVBAPI" == "1" ] && VDR_ARGS="$VDR_ARGS -P'dvbapi -d'"
-  [ "$VDR_IPTV" == "1" ] && VDR_ARGS="$VDR_ARGS -P 'iptv -d $VDR_IPTV_DEVICES'"
-  [ "$VDR_SATIP" == "1" ] && VDR_ARGS="$VDR_ARGS -P satip"
-  [ "$VDR_EPGSEARCH" == "1" ] && VDR_ARGS="$VDR_ARGS -P epgsearch"
+  [ "$VDR_IPTV" == "1" ] && VDR_ARGS="$VDR_ARGS -P iptv"
+  [ "$VDR_VNSI" == "1" ] && VDR_ARGS="$VDR_ARGS -P vnsiserver"
   [ "$VDR_STREAMDEV_SERVER" == "1" ] && VDR_ARGS="$VDR_ARGS -P streamdev-server"
   [ "$VDR_STREAMDEV_CLIENT" == "1" ] && VDR_ARGS="$VDR_ARGS -P streamdev-client -P epgsync -P svdrpservice"
   [ "$VDR_CHSCAN" == "1" ] && VDR_ARGS="$VDR_ARGS -P channelscan"
-  [ "$VDR_FEMON" == "1" ] && VDR_ARGS="$VDR_ARGS -P femon"
-  [ "$VDR_SYSINFO" == "1" ] && VDR_ARGS="$VDR_ARGS -P systeminfo"
-  [ "$VDR_SLEEP" == "1" ] && VDR_ARGS="$VDR_ARGS -P sleeptimer"
-  [ -z "$VDR_PVR" ] && VDR_PVR="none"
-  [ "$VDR_PVR" != "none" ] && VDR_ARGS="$VDR_ARGS -P $VDR_PVR"
-  [ "$VDR_TVSCRAPER" == "1" ] && VDR_ARGS="$VDR_ARGS -P tvscraper"
-  [ "$VDR_SKIN_NOPACITY" == "1" ] && VDR_ARGS="$VDR_ARGS -P skinnopacity"
-  [ "$VDR_WEATHER" == "1" ] && VDR_ARGS="$VDR_ARGS -P weatherforecast"
-  [ "$VDR_SKIN_DESIGNER" == "1" ] && VDR_ARGS="$VDR_ARGS -P skindesigner"
-  [ "$VDR_TVGUIDENG" == "1" -a "$VDR_SKIN_DESIGNER" == "1" ] && VDR_ARGS="$VDR_ARGS -P tvguideng"
-  [ "$VDR_ZAPHISTORY" == "1" ] && VDR_ARGS="$VDR_ARGS -P zaphistory"
-  [ "$VDR_LCDPROC" == "1" ] && VDR_ARGS="$VDR_ARGS -P lcdproc"
+  [ "$VDR_SKIN" == "1" ] && VDR_ARGS="$VDR_ARGS -P skindesigner -P weatherforecast -P tvguideng -P tvscraper"
 
   if [ "$VDR_LIVE" == "1" ]; then
       mkdir -p /storage/.cache/vdr/epgimages
