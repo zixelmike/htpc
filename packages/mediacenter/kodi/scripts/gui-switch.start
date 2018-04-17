@@ -22,15 +22,12 @@ else
   sed -i -e "s|<showexitbutton>.*$|<showexitbutton>true</showexitbutton>|" $KODI_SETTINGS
 fi
 
-if [ -f "$SERVICE_DIR/shell.conf" ]; then
-  . $SERVICE_DIR/shell.conf
-  if [ "$SHELL" == "KODI" ]; then
-      touch $LOCK_DIR/start.kodi
-  else
-      touch $LOCK_DIR/start.vdr
-  fi
-else
-  touch $LOCK_DIR/start.kodi
+# set start shell
+START_SHELL="start.kodi"
+if [ -f "$SERVICE_DIR/vdr.conf" ]; then
+  . $SERVICE_DIR/vdr.conf
+  [ "$VDR_SHELL" == "1" ] && START_SHELL="start.vdr"
 fi
+touch $LOCK_DIR/$START_SHELL
 
 exit 0
