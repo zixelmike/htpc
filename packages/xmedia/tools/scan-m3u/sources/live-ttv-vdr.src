@@ -4,22 +4,27 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
+OPT="$1" # 'epg' - build list for xmltv2vdr
+
 SERVICE_DIR="/storage/.cache/services"
 
 VDR_DIR="/storage/.config/vdr"
-ACE_DIR="/storage/.config/acestream/ttv-m3u"
-TTV_DIR="$VDR_DIR/ttv"
+ACE_DIR="/storage/.config/acestream"
+ACE_TTV_DIR="$ACE_DIR/ttv-m3u"
 TMP_DIR="/tmp/vdr-ttv"
 
-JSON_FILE="$TMP_DIR/acelive.json"
-JSON_FILE_GZ="$ACE_DIR/acelive.json.gz"
+JSON_FILE="$ACE_TTV_DIR/acelive.json"
+JSON_FILE_GZ="$ACE_TTV_DIR/acelive.json.gz"
 
 TMP_LIST="$TMP_DIR/tmp-acettv.list"
 TMP_CHLS="$TMP_DIR/channels.ttv"
 TMP_SETUP="$TMP_DIR/setup.tmp"
 
+VDR_SETUP_ORG="$VDR_DIR/setup.conf"
+VDR_SETUP_TMP="$TMP_DIR/setup.conf"
+
 VDR_CHFILE_ORG="$VDR_DIR/channels.conf"
-VDR_CHFILE_TTV="$TTV_DIR/channels.conf"
+VDR_CHFILE_TMP="$TMP_DIR/channels.conf"
 
 URL_FILE="$ACE_DIR/trash-url.conf"
 URL_TRASH="http://pomoyka.win"
@@ -44,26 +49,39 @@ del_cat () {
 # create VDR channels
 build_vdr () {
 INFILE=$1
-cat $INFILE | 
-  while read -r LINE ; do
+
+if [ "$OPT" == "epg" ]; then
+  cat $INFILE | 
+    while read -r LINE ; do
       CH_CAT=`echo $LINE | awk -F\\# '{print $1}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
       CH_NAME=`echo $LINE | awk -F\\# '{print $2}' |  sed 's/:/-/; s/^[ \t]*//; s/[ \t]*$//'`
       CH_PATH=`echo $LINE | awk -F\\# '{print $3}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
 
-      if [ "$CH_CAT" != "$CH_CAT_TEMP" ]; then
-          echo ":TTV $CH_CAT" >> $INFILE.vdr
-      fi
+      [ "$CH_CAT" != "$CH_CAT_TEMP" ] && echo ":TTV $CH_CAT" >> $INFILE.vdr
       echo "$CH_NAME;IPTV:@CN_NUM@:S=0|P=0|F=CURL|U=http%3A//127.0.0.1%3A6878/ace/getstream?url=${URL_M3U}${CH_PATH}&.mp4|A=0:I:0:256:257:0:0:@CN_NUM@:555:1:0" >> $INFILE.vdr
       echo "$CH_NAME = 0;1073741825;I-555-1-@CN_NUM@" >> $INFILE.setup
       CH_CAT_TEMP=$CH_CAT
-  done
-  rm -f $INFILE
+    done
+else
+  cat $INFILE | 
+    while read -r LINE ; do
+      CH_CAT=`echo $LINE | awk -F\\# '{print $1}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
+      CH_NAME=`echo $LINE | awk -F\\# '{print $2}' |  sed 's/:/-/; s/^[ \t]*//; s/[ \t]*$//'`
+      CH_PATH=`echo $LINE | awk -F\\# '{print $3}' | sed 's/^[ \t]*//; s/[ \t]*$//'`
+
+      [ "$CH_CAT" != "$CH_CAT_TEMP" ] && echo ":TTV $CH_CAT" >> $INFILE.vdr
+      echo "$CH_NAME;IPTV:@CN_NUM@:S=0|P=0|F=CURL|U=http%3A//127.0.0.1%3A6878/ace/getstream?url=${URL_M3U}${CH_PATH}&.mp4|A=0:I:0:256:257:0:0:@CN_NUM@:555:1:0" >> $INFILE.vdr
+      CH_CAT_TEMP=$CH_CAT
+    done
+fi
+
+rm -f $INFILE
 }
 
 # AceStream playlist for VDR
 create_list () {
   STAT_OLD=
-  mkdir -p $ACE_DIR
+  mkdir -p $ACE_TTV_DIR
 
   if [ -f "$JSON_FILE_GZ" ]; then
     STAT_OLD=`stat $JSON_FILE_GZ | grep 'Modify:'`
@@ -77,11 +95,9 @@ create_list () {
   fi
 
   STAT_NEW=`stat $JSON_FILE_GZ | grep 'Modify:'`
-  if [ "$STAT_OLD" == "$STAT_NEW" ]; then
-    if [ -f "$ACE_M3U" -a -f "$ACE_M3U_DIRECT" ]; then
-        echo "AceStream: You already actual playlist."
-        exit
-    fi
+  if [ "$STAT_OLD" == "$STAT_NEW" ] && [ -f "$VDR_DIR/ttv.update" ]; then
+      echo "AceStream: You already actual playlist."
+      exit
   fi
 
   rm -rf $TMP_DIR
@@ -161,8 +177,10 @@ create_list () {
     fi
   done
 
-  PART_SETUP=`ls $PART_DIR/*.setup`
-  cat $PART_SETUP >> $TMP_SETUP
+  if [ "$OPT" == "epg" ]; then
+    PART_SETUP=`ls $PART_DIR/*.setup`
+    cat $PART_SETUP >> $TMP_SETUP
+  fi
 
   LASTGR=''
   LASTGR_TMP=''
@@ -193,49 +211,60 @@ channel_num () {
 NUM_ST=$1
 NUM_CH=$1
 
-get_epg_list
+if [ "$OPT" == "epg" ]; then
+  get_epg_list
 
-# epgsources dir: vdr_epg_ttv
-echo "file" > $TMP_DIR/vdr_epg_ttv.epgsources
-echo "7" >> $TMP_DIR/vdr_epg_ttv.epgsources
+  # epgsources dir: vdr_epg_ttv
+  echo "file" > $TMP_DIR/vdr_epg_ttv.epgsources
+  echo "7" >> $TMP_DIR/vdr_epg_ttv.epgsources
 
-# xmltv2vdr dir: vdr_epg_ttv
-echo "#no pin" > $TMP_DIR/vdr_epg_ttv.xmltv2vdr
-echo "1;0;127;10" >> $TMP_DIR/vdr_epg_ttv.xmltv2vdr
+  # xmltv2vdr dir: vdr_epg_ttv
+  echo "#no pin" > $TMP_DIR/vdr_epg_ttv.xmltv2vdr
+  echo "3;0;127;10" >> $TMP_DIR/vdr_epg_ttv.xmltv2vdr
 
-cat $TMP_SETUP |  
-  while read -r LINE ; do
+  cat $TMP_SETUP |  
+    while read -r LINE ; do
       CH_NAME=`echo $LINE | sed 's/ = .*$//'`
-      CH_EPG=`grep "# ${CH_NAME}$" "$TMP_DIR/xmltv2vdr.list" | sed 's/ # .*$//'`
       CH_IDS=`echo $LINE | sed "s|@CN_NUM@|${NUM_ST}|; s/^.* = //"`
+      CH_EPG=`grep -m 1 "# ${CH_NAME}$" "$TMP_DIR/xmltv2vdr.list" | sed 's/ # .*$//'`
 
       #echo "$CH_NAME # $CH_EPG # $CH_IDS"
       if [ ! -z "$CH_EPG" ]; then
-          echo "xmltv2vdr.channel.$CH_EPG = $CH_IDS" >> $TMP_DIR/setup.conf
+          echo "xmltv2vdr.channel.$CH_EPG = $CH_IDS" >> $VDR_SETUP_TMP
           echo "$CH_EPG;$CH_NAME" >> $TMP_DIR/vdr_epg_ttv.epgsources
           echo "$CH_EPG" >> $TMP_DIR/vdr_epg_ttv.xmltv2vdr
       fi
       NUM_ST=$( expr $NUM_ST + 1 )
-  done
+    done
+  cp -f $TMP_DIR/vdr_epg_ttv.xmltv2vdr $VDR_DIR/plugins/xmltv2vdr/vdr_epg_ttv
+  cp -f $TMP_DIR/vdr_epg_ttv.epgsources $VDR_DIR/plugins/xmltv2vdr/epgsources/vdr_epg_ttv
+fi
 
 cat $TMP_CHLS |  
   while read -r LINE ; do
       CAT=`echo $LINE | grep '^:TTV'`
       if [ ! -z "$CAT" ]; then
-          echo $LINE >> $TMP_DIR/channels.conf
+          echo $LINE >> $VDR_CHFILE_TMP
           continue
       fi
       NEW_LINE=`echo $LINE | sed "s|@CN_NUM@|$NUM_CH|g"`
-      echo $NEW_LINE >> $TMP_DIR/channels.conf
+      echo $NEW_LINE >> $VDR_CHFILE_TMP
       NUM_CH=$( expr $NUM_CH + 1 )
   done
 }
 
 create_list
+channel_num 5000
 
-CN_NUM=$NUM
-[ -z "$CN_NUM" ] && CN_NUM=1000
-channel_num $CN_NUM
-#rm -fr $TMP_DIR
+if [ "$OPT" == "epg" ]; then
+  sed '/xmltv2vdr\.channel\..*/d' -i $VDR_SETUP_ORG
+  cat $VDR_SETUP_TMP >> $VDR_SETUP_ORG
+fi
+
+sed -n '/:TTV .*/q;p' -i $VDR_CHFILE_ORG > /dev/null 2>&1
+cat $VDR_CHFILE_TMP >> $VDR_CHFILE_ORG
+
+echo $(date) > $VDR_DIR/ttv.update
+rm -fr $TMP_DIR
 
 exit 0
