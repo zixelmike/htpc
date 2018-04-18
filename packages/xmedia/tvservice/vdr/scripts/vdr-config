@@ -41,11 +41,10 @@ VDR_CONFIG_DIR="/storage/.config/vdr"
   [ "$VDR_STREAMDEV_SERVER" == "1" ] && VDR_ARGS="$VDR_ARGS -P streamdev-server"
   [ "$VDR_STREAMDEV_CLIENT" == "1" ] && VDR_ARGS="$VDR_ARGS -P streamdev-client -P epgsync -P svdrpservice"
   [ "$VDR_CHSCAN" == "1" ] && VDR_ARGS="$VDR_ARGS -P channelscan"
-  [ "$VDR_SKIN" == "1" ] && VDR_ARGS="$VDR_ARGS -P skindesigner -P weatherforecast -P tvguideng -P tvscraper"
+  [ "$VDR_SKIN" == "1" ] && VDR_ARGS="$VDR_ARGS -P skindesigner -P weatherforecast"
 
   if [ "$VDR_LIVE" == "1" ]; then
       mkdir -p /storage/.cache/vdr/epgimages
-      [ "$VDR_EPGSEARCH" != "1" ] && VDR_ARGS="$VDR_ARGS -P epgsearch"
       VDR_ARGS="$VDR_ARGS -P'live --ip=0.0.0.0 -e /storage/.cache/vdr/epgimages'"
       if [ ! -e /storage/.config/vdr/plugins/live/live.pem ] || [ ! -e /storage/.config/vdr/plugins/live/live-key.pem ]; then
           openssl req -new -x509 -nodes -days 9999 -batch -subj "/" -outform pem -out /storage/.config/vdr/plugins/live/live.pem -keyout /storage/.config/vdr/plugins/live/live-key.pem > /dev/null 2>&1
