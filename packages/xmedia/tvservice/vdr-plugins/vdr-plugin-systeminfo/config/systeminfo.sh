@@ -53,7 +53,7 @@ case "$1" in
 
 	5)	# current Display resolution
 		D_DEV=$(xrandr |grep ' connected' | awk '{print $1}')
-		D_RES=$(xrandr |grep ' connected' | awk '{print $3}' | sed s/+.*//)
+		D_RES=$(xrandr |grep ' connected' | awk '{print $4}' | sed s/+.*//)
 		echo -ne "Display:\t"${D_DEV:-<unknown>}"\t"${D_RES:-N/A}
 		exit
         	;;
