@@ -26,7 +26,7 @@ done
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Pillow simplejson pycrypto"
 
 # system addons
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Common-settings xmlstarlet"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Common-settings Extended-settings xmlstarlet"
   
 if [ "$JOYSTICK_SUPPORT" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET peripheral.joystick"

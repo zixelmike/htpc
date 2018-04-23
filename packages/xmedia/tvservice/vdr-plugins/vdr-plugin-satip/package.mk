@@ -24,6 +24,7 @@ make_target() {
 makeinstall_target() {
   make LIBDIR=/usr/lib/vdr \
        SATIP_USE_TINYXML=1 \
+       GITTAG=$PKG_VERSION \
        DESTDIR=$INSTALL \
        install
 }
