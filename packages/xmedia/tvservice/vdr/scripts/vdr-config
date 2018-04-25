@@ -9,6 +9,17 @@
 SERVICE_DIR="/storage/.cache/services"
 VDR_CONFIG_DIR="/storage/.config/vdr"
 
+# Tvheadend stop
+if [ -f "$SERVICE_DIR/tvheadend.conf" ]; then
+  TVH_HOME="/storage/.config/tvheadend"
+  if [ -f "$TVH_HOME/tvh.conf" ]; then
+      . $TVH_HOME/tvh.conf
+      [ "$TVH_LIVE" != "yes" ] && systemctl stop tvheadend.service
+  else
+      systemctl stop tvheadend.service
+  fi
+fi
+
 [ -f "$SERVICE_DIR/vdr.conf" ] && . $SERVICE_DIR/vdr.conf
 [ -f "$SERVICE_DIR/dvb.conf" ] && . $SERVICE_DIR/dvb.conf
 [ -f "$SERVICE_DIR/locale.conf" ] && . $SERVICE_DIR/locale.conf
