@@ -24,8 +24,8 @@ fi
 # user arguments
 if [ -f "$TVH_HOME/tvh.conf" ]; then
   . $TVH_HOME/tvh.conf
-  [ ! -z "$TVH_OPT" ] && TVHEADEND_ARG="$TVHEADEND_ARG $TVH_OPT"
-  [ ! -z "$TVH_DVB" ] && TVHEADEND_ARG="$TVHEADEND_ARG -a $TVH_DVB"
+  [ -n "$TVH_OPT" ] && TVHEADEND_ARG="$TVHEADEND_ARG $TVH_OPT"
+  [ -n "$TVH_DVB" ] && TVHEADEND_ARG="$TVHEADEND_ARG -a $TVH_DVB"
 fi
 
 # wait for DVB

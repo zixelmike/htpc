@@ -23,11 +23,14 @@ fi
 [ -f "$SERVICE_DIR/vdr.conf" ] && . $SERVICE_DIR/vdr.conf
 [ -f "$SERVICE_DIR/dvb.conf" ] && . $SERVICE_DIR/dvb.conf
 [ -f "$SERVICE_DIR/locale.conf" ] && . $SERVICE_DIR/locale.conf
-[ -f "$VDR_CONFIG_DIR/vdr-plugins.conf" ] && . $VDR_CONFIG_DIR/vdr-plugins.conf
+[ -f "$VDR_CONFIG_DIR/vdr-options.conf" ] && . $VDR_CONFIG_DIR/vdr-options.conf
 
 [ -z "$SYS_LOCALE" ] && SYS_LOCALE="ru_RU.UTF-8"
 
   VDR_ARGS="--lirc=/run/lirc/lircd"
+
+  [ -n "$VDR_DVB" ] && VDR_ARGS="$VDR_ARGS $VDR_DVB"
+
   if [ "$VDR_DEBUG" == "1" ]; then
       VDR_ARGS="$VDR_ARGS --log=3"
   else
@@ -68,7 +71,7 @@ fi
       VDR_ARGS="$VDR_ARGS -P'xmltv2vdr --epgfile=/storage/.config/vdr/plugins/xmltv2vdr/epg.db --logfile=/var/log/xmltv2vdr.log'"
   fi
 
-  [ -n "$FVDR_PLUGINS" ] && VDR_ARGS="$VDR_ARGS $FVDR_PLUGINS"
+  [ -n "$VDR_PLUGINS" ] && VDR_ARGS="$VDR_ARGS $VDR_PLUGINS"
 
 # refresh rate 50hz
 if [ "$VDR_50HZ" == "1" ]; then
