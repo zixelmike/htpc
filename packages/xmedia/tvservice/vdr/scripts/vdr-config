@@ -10,11 +10,11 @@ SERVICE_DIR="/storage/.cache/services"
 VDR_CONFIG_DIR="/storage/.config/vdr"
 
 [ -f "$SERVICE_DIR/vdr.conf" ] && . $SERVICE_DIR/vdr.conf
+[ -f "$SERVICE_DIR/dvb.conf" ] && . $SERVICE_DIR/dvb.conf
 [ -f "$SERVICE_DIR/locale.conf" ] && . $SERVICE_DIR/locale.conf
 [ -f "$VDR_CONFIG_DIR/vdr-plugins.conf" ] && . $VDR_CONFIG_DIR/vdr-plugins.conf
 
 [ -z "$SYS_LOCALE" ] && SYS_LOCALE="ru_RU.UTF-8"
-[ -z "$DVB_FEINIT" ] && DVB_FEINIT=0
 
   VDR_ARGS="--lirc=/run/lirc/lircd"
   if [ "$VDR_DEBUG" == "1" ]; then
@@ -60,13 +60,11 @@ VDR_CONFIG_DIR="/storage/.config/vdr"
   [ -n "$FVDR_PLUGINS" ] && VDR_ARGS="$VDR_ARGS $FVDR_PLUGINS"
 
 # refresh rate 50hz
-[ -z "$VDR_50HZ" ] && VDR_50HZ="1"
 if [ "$VDR_50HZ" == "1" ]; then
   # connected Output
   DISP=$(xrandr |grep ' connected' | awk '{print $1}')
   # current resolution
   RES=$(xrandr --verbose | grep '*current' | awk '{print $1}')
-
   logger -t vdr "set display mode: $DISP $RES 50hz"
   xrandr --output $DISP --mode $RES --rate 50
 fi
@@ -75,7 +73,7 @@ echo "SYS_LOCALE=\"$SYS_LOCALE\"" > /run/alexelec/vdr.conf
 echo "VDR_ARGS=\"$VDR_ARGS\"" >> /run/alexelec/vdr.conf
 
 # wait for DVB
-if [ "$DVB_FEINIT" == "1" ] ; then
+if [ "$DVB_WAIT" == "1" ] ; then
   TIMEOUT=30
   for i in $(seq 1 $TIMEOUT) ; do
     [ -e /dev/dvb/adapter0/frontend0 ] && break

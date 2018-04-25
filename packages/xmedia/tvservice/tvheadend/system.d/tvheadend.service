@@ -5,7 +5,7 @@ Before=kodi.service
 ConditionPathExists=/storage/.cache/services/tvheadend.conf
 
 [Service]
-EnvironmentFile=-/run/libreelec/tvh.conf
+EnvironmentFile=-/run/alexelec/tvh.conf
 ExecStartPre=-/usr/bin/tvh-config
 ExecStart=/usr/bin/tvheadend $TVH_ARGS
 ExecStop=/bin/kill -TERM $MAINPID

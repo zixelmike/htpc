@@ -11,10 +11,8 @@ LOG_TVH="/var/log/tvheadend.log"
 LOG_TVH_OLD="/var/log/tvheadend.log.old"
 TVH_HOME="/storage/.config/tvheadend"
 
-. $SERVICE_DIR/tvheadend.conf
-
-[ -z "$TVH_DEBUG" ] && TVH_DEBUG=0
-[ -z "$TVH_FEINIT" ] && TVH_FEINIT=0
+[ -f "$SERVICE_DIR/dvb.conf" ] && . $SERVICE_DIR/dvb.conf
+[ -f "$SERVICE_DIR/tvheadend.conf" ] && . $SERVICE_DIR/tvheadend.conf
 
 if [ "$TVH_DEBUG" == "1" ]; then
   [ -f "$LOG_TVH" ] && mv -f $LOG_TVH $LOG_TVH_OLD
@@ -24,7 +22,7 @@ else
 fi
 
 # wait for DVB
-if [ "$DVB_FEINIT" == "1" ] ; then
+if [ "$DVB_WAIT" == "1" ] ; then
   TIMEOUT=30
   for i in $(seq 1 $TIMEOUT) ; do
     [ -e /dev/dvb/adapter0/frontend0 ] && break
@@ -32,4 +30,4 @@ if [ "$DVB_FEINIT" == "1" ] ; then
   done
 fi
 
-echo "TVH_ARGS=\"$TVHEADEND_ARG\"" > /run/libreelec/tvh.conf
+echo "TVH_ARGS=\"$TVHEADEND_ARG\"" > /run/alexelec/tvh.conf
