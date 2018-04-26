@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="Extended-settings"
-PKG_VERSION="5002434"
+PKG_VERSION="9272f1d"
 PKG_VERSION_ADDON="8.0.0"
 PKG_ARCH="any"
 PKG_LICENSE="prop."
