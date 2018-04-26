@@ -38,7 +38,6 @@ URL_JSON="$URL_TRASH/trash/ttv-list/acelive.json"
 URL_M3U=$(echo $URL_JSON | sed 's|\.json|\/|; s/:/%3A/g')
 
 [ -f $SERVICE_DIR/acettv.conf ] && . $SERVICE_DIR/acettv.conf
-[ -f $SERVICE_DIR/acerun.conf ] && . $SERVICE_DIR/acerun.conf
 
 # del categories
 del_cat () {
@@ -267,4 +266,5 @@ cat $VDR_CHFILE_TMP >> $VDR_CHFILE_ORG
 echo $(date) > $VDR_DIR/ttv.update
 rm -fr $TMP_DIR
 
-exit 0
+echo "Done! Playlist created."
+exit
