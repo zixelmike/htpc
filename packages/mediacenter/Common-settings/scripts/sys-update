@@ -1,0 +1,47 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+. /etc/os-release
+
+URL_MAIN="https://github.com/AlexELEC/htpc/releases/download"
+URL_LAST="https://raw.githubusercontent.com/AlexELEC/htpc/master/latest"
+
+NAME_CURRENT="$(cat /etc/release)"
+NAME_UPDATE="${NAME_CURRENT/-[0-9]*/}"
+UPD_VER=
+
+#################################MAIN###########################################
+
+# Check URL
+if [ "$1" == "check-url" ]; then
+
+  UPD_VER=$(curl -s "$URL_LAST")
+  if curl --output /dev/null --silent --head --fail "$URL_MAIN/$UPD_VER/$NAME-$NAME_UPDATE-$UPD_VER.tar"
+  then
+    echo "$URL_MAIN/$UPD_VER/$NAME-$NAME_UPDATE-$UPD_VER.tar"
+  else
+    echo "error"
+  fi
+
+# current version
+elif [ "$1" == "ver-current" ] ; then
+
+  echo "$NAME_CURRENT"
+
+# update version
+elif [ "$1" == "ver-update" ] ; then
+
+  UPD_VER=$(curl -s "$URL_LAST")
+  echo "$NAME_UPDATE-$UPD_VER"
+
+# reboot
+elif [ "$1" == "reboot" ] ; then
+
+  systemctl reboot
+
+fi
+
+exit 0
