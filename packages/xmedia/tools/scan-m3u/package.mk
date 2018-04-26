@@ -23,7 +23,7 @@ pre_configure_target() {
 }
 
 pre_make_target(){
-  [ -f $ROOT/private/$PKG_NAME/ttv-logo.src ] && cp $ROOT/private/$PKG_NAME/ttv-logo.src $ROOT/$PKG_BUILD
+  [ -f $ROOT/private/$PKG_NAME/ttv-logo.src ] && cp $ROOT/private/$PKG_NAME/ttv-logo.src $PKG_BUILD
 }
 
 make_target() {
