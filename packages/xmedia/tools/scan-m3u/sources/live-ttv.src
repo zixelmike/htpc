@@ -8,7 +8,12 @@
 
 # run for VDR
 if [ "$TTV_SOFT" == "Ace4vdr" ]; then
-  /usr/bin/live-ttv-vdr epg
+  IS_EPG=$1
+  if [ "$IS_EPG" == "novdrepg" ]; then
+      /usr/bin/live-ttv-vdr noepg
+  else
+      /usr/bin/live-ttv-vdr epg
+  fi
   exit
 fi
 
