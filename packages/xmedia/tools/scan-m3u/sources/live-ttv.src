@@ -4,6 +4,8 @@
 #      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
 ################################################################################
 
+SERVICE_DIR="/storage/.cache/services"
+
 [ -f $SERVICE_DIR/acerun.conf ] && . $SERVICE_DIR/acerun.conf
 
 # run for VDR
@@ -51,7 +53,7 @@ URL_M3U=$(echo $URL_JSON | sed 's|\.json|\/|')
 [ -f $SERVICE_DIR/acettv.conf ] && . $SERVICE_DIR/acettv.conf
 
 [ -z "$TTV_SOFT" ] && TTV_SOFT="AceStream"
-[ -z "$TRANSLATE" ] && TRANSLATE="AceStream"
+[ -z "$TRANSLATE" ] && TRANSLATE="Torrent-TV"
 
 # clean Nox categories
 del_cat () {
