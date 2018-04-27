@@ -48,3 +48,8 @@ PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pvr.stalker"
 # inputstream addons
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET inputstream.rtmp"
 PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET inputstream.adaptive"
+
+# visualization addons
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET visualization.spectrum"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET visualization.waveform"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET visualization.projectm"
