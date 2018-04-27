@@ -79,8 +79,13 @@ if [ "$VDR_50HZ" == "1" ]; then
   DISP=$(xrandr |grep ' connected' | awk '{print $1}')
   # current resolution
   RES=$(xrandr --verbose | grep '*current' | awk '{print $1}')
-  logger -t vdr "set display mode: $DISP $RES 50hz"
-  xrandr --output $DISP --mode $RES --rate 50
+  (
+    while [ $(pidof kodi.bin) ]; do
+      usleep 500000
+    done
+    xrandr --output $DISP --mode $RES --rate 50
+    logger -t vdr "set display mode: $DISP $RES 50hz"
+  ) &
 fi
 
 echo "SYS_LOCALE=\"$SYS_LOCALE\"" > /run/alexelec/vdr.conf
