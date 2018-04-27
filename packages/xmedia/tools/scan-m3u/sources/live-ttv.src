@@ -19,9 +19,7 @@ if [ "$TTV_SOFT" == "Ace4vdr" ]; then
   exit
 fi
 
-SERVICE_DIR="/storage/.cache/services"
 M3U_DIR="/storage/ttv-m3u"
-
 NOX_M3U="$M3U_DIR/NoxLive-TTV.m3u"
 ACE_M3U="$M3U_DIR/AceLive-TTV.m3u"
 TVH_M3U="$M3U_DIR/TVH-TTV.m3u"
