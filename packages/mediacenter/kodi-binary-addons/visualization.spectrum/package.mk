@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="visualization.spectrum"
-PKG_VERSION="b533965"
+PKG_VERSION="73c8786"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/notspiff/visualization.spectrum"
