@@ -4,7 +4,7 @@
 ################################################################################
 
 PKG_NAME="visualization.waveform"
-PKG_VERSION="d34beaa"
+PKG_VERSION="a603d10"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/notspiff/visualization.waveform"
