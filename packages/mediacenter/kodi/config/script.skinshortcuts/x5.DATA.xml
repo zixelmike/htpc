@@ -2,7 +2,7 @@
 <shortcuts>
 	<shortcut>
 		<defaultID>service.common.settings</defaultID>
-		<label>Системные</label>
+		<label>Общие</label>
 		<label2>Программа</label2>
 		<icon>DefaultAddon.png</icon>
 		<thumb>image://%2fusr%2fshare%2fkodi%2faddons%2fservice.common.settings%2fresources%2ficon.png/</thumb>
