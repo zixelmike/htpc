@@ -1,0 +1,21 @@
+#!/bin/sh
+################################################################################
+#      This file is part of Alex@ELEC - http://www.alexelec.in.ua
+#      Copyright (C) 2011-present Alexandr Zuyev (alex@alexelec.in.ua)
+################################################################################
+
+SERVICE_DIR="/storage/.cache/services"
+
+[ -f "$SERVICE_DIR/vdr.conf" ] && . $SERVICE_DIR/vdr.conf
+
+# refresh rate 50hz
+if [ "$VDR_50HZ" == "1" ]; then
+  # connected Output
+  DISP=$(xrandr |grep ' connected' | awk '{print $1}')
+  # current resolution
+  RES=$(xrandr --verbose | grep '*current' | awk '{print $1}')
+  xrandr --output $DISP --mode $RES --rate 50
+  logger -t vdr-post "set display mode: $DISP $RES 50hz"
+fi
+
+exit 0

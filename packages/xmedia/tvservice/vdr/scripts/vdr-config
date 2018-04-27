@@ -85,18 +85,4 @@ if [ "$DVB_WAIT" == "1" ] ; then
   done
 fi
 
-# refresh rate 50hz
-if [ "$VDR_50HZ" == "1" ]; then
-  # wait Kodi stop
-  while [ $(pidof kodi.bin) ]; do
-      usleep 250000
-  done
-  # connected Output
-  DISP=$(xrandr |grep ' connected' | awk '{print $1}')
-  # current resolution
-  RES=$(xrandr --verbose | grep '*current' | awk '{print $1}')
-  xrandr --output $DISP --mode $RES --rate 50
-  logger -t vdr "set display mode: $DISP $RES 50hz"
-fi
-
 exit 0
