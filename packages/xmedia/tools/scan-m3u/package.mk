@@ -23,7 +23,7 @@ pre_configure_target() {
 }
 
 pre_make_target(){
-  [ -f $ROOT/private/$PKG_NAME/ttv-logo.src ] && cp $ROOT/private/$PKG_NAME/ttv-logo.src $PKG_BUILD
+  cp $ROOT/private/$PKG_NAME/ttv-logo.src $PKG_BUILD || true
 }
 
 make_target() {
@@ -31,7 +31,7 @@ make_target() {
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f scan-m3u.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f live-ttv.src
   CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f live-ttv-vdr.src
-  [ -f ttv-logo.src ] && CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f ttv-logo.src
+  [ -f ttv-logo.src ] && CC=$CC CFLAGS=$CFLAGS ./shc -v -r -B -f ttv-logo.src || true
 }
 
 makeinstall_target() {
@@ -41,7 +41,7 @@ makeinstall_target() {
     cp scan-m3u.src.x $INSTALL/usr/bin/scan-m3u
     cp live-ttv.src.x $INSTALL/usr/bin/live-ttv
     cp live-ttv-vdr.src.x $INSTALL/usr/bin/live-ttv-vdr
-    [ -e ttv-logo.src.x ] && cp ttv-logo.src.x $INSTALL/usr/bin/ttv-logo
+    cp ttv-logo.src.x $INSTALL/usr/bin/ttv-logo || true
   mkdir -p $INSTALL/usr/config/acestream
     cp $PKG_DIR/config/* $INSTALL/usr/config/acestream
 }
